@@ -1,0 +1,53 @@
+#!/bin/bash
+
+clear
+set -e
+
+sudo pacman -Syu --needed --noconfirm archiso
+
+if [[ -d ~/iso-build ]]; then
+  sudo rm -rf ~/iso-build
+fi
+
+mkdir ~/iso-build
+
+cp -r /usr/share/archiso/configs/releng ~/iso-build
+mv ~/iso-build/releng ~/iso-build/iso
+
+if [[ ! -d ~/iso-build/zfs-utils ]]; then
+  cd ~/iso-build
+  git clone https://aur.archlinux.org/zfs-utils.git
+fi
+
+if [[ ! -d ~/iso-build/zfs-dkms ]]; then
+  cd ~/iso-build
+  git clone https://aur.archlinux.org/zfs-dkms.git
+fi
+
+cd ~/iso-build/zfs-utils && git pull && makepkg -f --skippgpcheck
+cd ~/iso-build/zfs-dkms && git pull && makepkg -f --skippgpcheck
+
+cd ~
+
+if [[ ! -d ~/iso-build/zfs-repo ]]; then
+  mkdir ~/iso-build/zfs-repo
+fi
+
+mv ~/iso-build/zfs-utils/*.zst ~/iso-build/zfs-repo
+mv ~/iso-build/zfs-dkms/*.zst ~/iso-build/zfs-repo
+
+repo-add ~/iso-build/zfs-repo/zfs-repo.db.tar.gz ~/iso-build/zfs-repo/*.zst
+
+echo "linux-headers" >> ~/iso-build/iso/packages.x86_64
+echo "zfs-utils" >> ~/iso-build/iso/packages.x86_64
+echo "zfs-dkms" >> ~/iso-build/iso/packages.x86_64
+
+echo -e "\n[zfs-repo]" >> ~/iso-build/iso/pacman.conf
+echo "SigLevel = Optional TrustAll" >> ~/iso-build/iso/pacman.conf
+echo -e "Server = file://$(pwd)/iso-build/zfs-repo\n" >> ~/iso-build/iso/pacman.conf
+
+mkdir ~/iso-build/iso/work
+
+sudo mkarchiso -v -w ~/iso-build/iso/work -o ~/ ~/iso-build/iso
+
+#end
