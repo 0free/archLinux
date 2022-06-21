@@ -28,7 +28,7 @@ packages_list() {
         # bluetooth
         bluez bluez-utils
         # audio
-        pipewire pipewire-alsa
+        pipewire pipewire-alsa easyeffects
         # firmware
         fwupd fwupd-efi
         # trackpad
@@ -60,7 +60,7 @@ packages_list() {
             # kde theme
             oxygen materia-kde kvantum-theme-materia
             # kde app
-            dolphin konquest
+            dolphin
         )
 
     fi
@@ -70,7 +70,7 @@ packages_list() {
         if [[ $DESKTOP == "gnome" ]]; then
             packages+=(
                 # gnome extra
-                gnome-software gnome-photos gnome-music gnome-clocks gnome-contacts gnome-calculator gnome-maps gnome-logs gnome-remote-desktop gnome-screenshot gnome-boxes gnome-calendar gnome-power-manager gnome-sound-recorder gnome-font-viewer gnome-color-manager fragments gnome-subtitles gnome-connections gnome-recipes gnome-notes gnome-dictionary gnome-multi-writer gnome-bluetooth-3.0 gnome-podcasts gnome-characters gnome-code-assistance gnome-builder ghex
+                gnome-software gnome-photos gnome-music gnome-clocks gnome-contacts gnome-calculator gnome-maps gnome-logs gnome-remote-desktop gnome-screenshot gnome-boxes gnome-calendar gnome-power-manager gnome-sound-recorder gnome-font-viewer gnome-color-manager fragments gnome-subtitles gnome-connections gnome-recipes gnome-notes gnome-dictionary gnome-multi-writer gnome-bluetooth-3.0 gnome-podcasts gnome-characters gnome-code-assistance gnome-builder ghex baobab
                 # gnome theme
                 arc-gtk-theme arc-solid-gtk-theme arc-icon-theme materia-gtk-theme
                 # photos
@@ -96,6 +96,7 @@ packages_list() {
                 kmplayer kaffeine
                 # finance
                 skrooge kmymoney
+                # development
                 kdevelop kdevelop-php kde-dev-scripts
                 # math
                 cantor labplot kgraphviewer
