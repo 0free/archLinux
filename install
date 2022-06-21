@@ -389,9 +389,9 @@ setup_drive() {
     menu "select a drive" drive ${drives[@]}
 
     if ls $location | grep $drive | grep part; then
-        partitions=(use the complete drive)
+        partitions=(re-partition)
         partitions+=($(ls $location | grep $drive | grep part))
-        menu "select a root partition or use all the drive" partition ${partitions[@]}
+        menu "select a root partition or re-partition the drive" partition ${partitions[@]}
         if ls $location | grep $partition ; then
             root_drive=$location"$partition"
             partitions=($(ls $location | grep part))
