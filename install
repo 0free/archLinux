@@ -757,7 +757,6 @@ setup_desktop() {
         if ! command -v zfs; then
             install_zfs
         fi
-        enable_zfs_services
     fi
     packages_list
     install_packages
@@ -989,17 +988,15 @@ enable_services() {
         mkdir /var/log/mysql && chown -R mysql /var/log/mysql
     fi
 
-}
-
-enable_zfs_services() {
-
-    echo ">>> enabling ZFS services"
-    systemctl enable zfs-import-cache
-    systemctl enable zfs-import-scan
-    systemctl enable zfs-mount
-    systemctl enable zfs-share
-    systemctl enable zfs-zed
-    systemctl enable zfs.target
+    if grep -q zfs /etc/fstab; then
+        echo ">>> enabling ZFS services"
+        systemctl enable zfs-import-cache
+        systemctl enable zfs-import-scan
+        systemctl enable zfs-mount
+        systemctl enable zfs-share
+        systemctl enable zfs-zed
+        systemctl enable zfs.target
+    fi
 
 }
 
