@@ -691,7 +691,6 @@ create_user() {
     if id $USER &>/dev/null; then
         userdel $USER
     fi
-
     useradd -m -g users -G wheel -s /bin/bash $USER || create_user
     echo "$USER ALL=(ALL) ALL" > /etc/sudoers.d/$USER
 
@@ -700,13 +699,13 @@ create_user() {
 set_user_password() {
 
     echo ">>> setting user password"
-    read -sp " --> $USER password: " USER_PASSWORD
+    read -sp " --> $USER password: " user_password
     read -sp " --> $USER password (confirm): " check
-    if [[ $USER_PASSWORD != $check ]]; then
+    if [[ $user_password != $check ]]; then
         echo "ERROR: password does not match"
         set_user_password
     fi
-    echo -en "$USER_PASSWORD\n$USER_PASSWORD" | passwd $USER
+    echo -en "$user_password\n$user_password" | passwd $USER
 
 }
 
@@ -733,10 +732,10 @@ set_locale() {
     if [[ -f /etc/locale.conf ]]; then
         rm /etc/locale.conf
     fi
-    for LANG in ${language[@]}; do
-        if grep -Ew "$LANG" /etc/locale.gen; then
-            sed -i "s/^#$LANG.UTF-8/$LANG.UTF-8/" /etc/locale.gen
-            echo "LANG=$LANG.UTF-8" >> /etc/locale.conf
+    for lang in ${language[@]}; do
+        if grep -Ew "$lang" /etc/locale.gen; then
+            sed -i "s/^#$lang.UTF-8/$lang.UTF-8/" /etc/locale.gen
+            echo "lang=$lang.UTF-8" >> /etc/locale.conf
         fi
     done
     locale-gen
@@ -806,7 +805,6 @@ set_zfs() {
 
     MODULES+=' zfs'
     sed -i 's/block filesystems keyboard fsck/block keyboard zfs filesystems/' /etc/mkinitcpio.conf
-    modprobe zfs
 
 }
 
