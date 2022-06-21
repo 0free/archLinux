@@ -388,7 +388,8 @@ setup_drive() {
 
     menu "select a drive" DRIVE ${DRIVES[@]}
 
-    PARTITIONS=($(ls $location | grep $DRIVE | grep part))
+    PARTITIONS=(use the complete drive)
+    PARTITIONS+=($(ls $location | grep $DRIVE | grep part))
 
     if [ $PARTITIONS ]; then
         menu "select a partition" PARTITION ${PARTITIONS[@]}
