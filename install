@@ -754,7 +754,9 @@ set_locale() {
 setup_desktop() {
 
     if grep -q zfs /etc/fstab; then
-        set_zfs
+        if ! command -v zfs; then
+            install_zfs
+        fi
         enable_zfs_services
     fi
     packages_list
@@ -789,7 +791,7 @@ setup_desktop() {
 
 }
 
-set_zfs() {
+install_zfs() {
 
     echo ">>> installing zfs-linux"
 
