@@ -1,0 +1,1145 @@
+#!/bin/bash
+
+BOOTSIZE='199' # MB
+SWAPFILE='0' # MB
+TIMEZONE='Asia/Muscat'
+LANGUAGE=(ar_OM en_US)
+KEYMAPS=(us)
+
+MODULES=''
+
+packages_list() {
+
+    PACKAGES=(
+        # efi boot
+        efibootmgr grub grub-customizer
+        # utilities
+        bash-completion sudo fakeroot syslog-ng dialog unrar unzip wget zip git reflector
+        # spell check
+        aspell hspell hunspell nuspell libvoikko
+        # xorg
+        xorg-xwayland
+        # fileSystem
+        os-prober gptfdisk dosfstools mtools ntfs-3g ntfsprogs btrfs-progs xfsprogs f2fs-tools udftools
+        # network
+        networkmanager network-manager-applet gufw rsync
+        # wireless
+        archlinux-keyring wpa_supplicant
+        # bluetooth
+        bluez bluez-utils
+        # audio
+        pipewire pipewire-alsa
+        # firmware
+        fwupd fwupd-efi
+        # trackpad
+        xf86-input-synaptics
+    )
+
+    if [[ $DESKTOP == "gnome" ]]; then
+
+        PACKAGES+=(
+            # gnome session
+            gdm gnome-session gnome-shell gnome-shell-extensions gnome-control-center gnome-tweaks gnome-menus
+            # gnome tools
+            gnome-keyring seahorse gnome-terminal gnome-disk-utility nautilus gedit gedit-plugins gnome-system-monitor
+            # firmware
+            gnome-firmware
+        )
+
+    fi
+
+    if [[ $DESKTOP == "kde" ]]; then
+
+        PACKAGES+=(
+            # kde session
+            sddm sddm-kcm kde-workspace plasma-desktop kinit kwayland-integration kdeplasma-addons
+            # system
+            konsole systemsettings 
+            # kde tools
+            kactivities kscreen kmenuedit bluedevil
+            # kde theme
+            oxygen materia-kde kvantum-theme-materia
+            # kde app
+            dolphin konquest
+        )
+
+    fi
+
+    if [[ $COMPUTER == "workstation" ]]; then
+
+        if [[ $DESKTOP == "gnome" ]]; then
+            packages+=(
+                # gnome extra
+                gnome-software gnome-photos gnome-music gnome-clocks gnome-contacts gnome-calculator gnome-maps gnome-logs gnome-remote-desktop gnome-screenshot gnome-boxes gnome-calendar gnome-power-manager gnome-sound-recorder gnome-font-viewer gnome-color-manager fragments gnome-subtitles gnome-connections gnome-recipes gnome-notes gnome-dictionary gnome-multi-writer gnome-bluetooth-3.0 gnome-podcasts gnome-characters gnome-code-assistance gnome-builder ghex
+                # gnome theme
+                arc-gtk-theme arc-solid-gtk-theme arc-icon-theme materia-gtk-theme
+                # photos
+                gthumb eog
+                # mail
+                geary
+                # sound
+                lollypop soundconverter blanket
+            )
+            AUR_PACKAGE+=(
+                # gnome extra
+                gdm-settings gnome-session-properties gnome-shell-extension-dash-to-panel gnome-shell-extension-dash-to-dock gnome-shell-extension-freon gnome-text-editor
+            )
+        fi
+
+        if [[ $DESKTOP == "kde" ]]; then
+            packages+=(
+                # kde app
+                kmix kmail kdenlive ktorrent kdeconnect kamera kamoso spectacle partitionmanager akregator okteta kjots
+                # photo
+                kphotoalbum
+                # media
+                kmplayer kaffeine
+                # finance
+                skrooge kmymoney
+                kdevelop kdevelop-php kde-dev-scripts
+                # math
+                cantor labplot kgraphviewer
+                # edu
+                kdeedu-data
+                # music
+                minuet
+            )
+            AUR_PACKAGE+=(
+                # theme
+                arc-kde-git
+                # thumbnail
+                stl-thumb-kde
+                # archive
+                ark-git
+                # music
+                amarok
+                # save kde customization
+                konsave
+                # develop
+                kdevelop-python
+            )
+        fi
+
+        PACKAGES+=(
+            # browser
+            min
+            # fonts
+            font-manager woff2 awesome-terminal-fonts adobe-source-sans-fonts adobe-source-serif-fonts adobe-source-code-pro-fonts ttf-roboto ttf-ubuntu-font-family ttf-dejavu inter-font ttf-croscore
+            # drawing
+            drawing
+            # documents
+            paperwork
+            # plan
+            peek minder
+            # stream
+            obs-studio
+            # vulkan
+            vulkan-headers vulkan-icd-loader vulkan-validation-layers vulkan-tools
+            # video
+            totem celluloid pitivi
+            # photos
+            curtail shotwell inkscape gimp krita gmic
+            # office
+            libreoffice-fresh spice-up
+            # pdf
+            evince
+            # printer
+            cups cups-pdf
+            # driver
+            broadcom-wl-dkms
+            # trackpad
+            xf86-input-synaptics
+            # math
+            geogebra sagemath
+            # wine
+            wine-staging vkd3d faudio
+            # finance
+            homebank kresus
+            # youtube
+            yt-dlp
+            # 3d
+            blender freecad
+            # 3d printer
+            cura
+            # code
+            code stylelint typescript
+            # mauikit
+            mauikit mauikit-accounts mauikit-filebrowsing mauikit-imagetools mauikit-texteditor
+            # bitcoin
+            bitcoin-tx
+            # playstation
+            pcsx2
+            # java
+            jdk-openjdk
+            # rust
+            rust
+            # php
+            php php-apcu php-cgi php-phpdbg php-fpm php-geoip php-imagick php-intl php-gd php-phpdbg php-memcache php-memcached php-redis php-snmp
+            # composer
+            composer
+            # php admin
+            phpmyadmin
+            # php tools
+            xdebug
+        )
+
+        AUR_PACKAGE=(
+            # icons
+            colloid-icon-theme-git
+            # browser
+            google-chrome
+            # package manager
+            octopi pamac-aur-git
+            # system restore
+            timeshift
+            # pdf
+            acroread sioyek pdfstudioviewer
+            # office
+            onlyoffice-bin freeoffice wps-office openoffice-bin
+            # meetings
+            teams zoom
+            # drives
+            insync onedrivegui-git odrive dropbox megasync-bin
+            # social
+            whatsapp-for-linux whatsie-git
+            # wireless drivers
+            rtl8814au-aircrack-dkms-git
+            # Corsair
+            ckb-next-git
+            # RGB
+            openrgb-git
+            # screen
+            green-recorder-git wayfarer-git
+            # plan
+            morgen-bin planner xmind
+            # media player
+            clapper xplayer
+            # music player
+            nuclear-player-bin amberol
+            # radio
+            shortwave
+            # video edit
+            davinci-resolve lightworks video-trimmer
+            # audio edit
+            stargate 
+            # youtube
+            freetube-bin youtube-music-bin
+            # download
+            video-downloader 4kyoutubetomp3 4kvideodownloader 4ktokkit 4kstogram
+            # media
+            plex-desktop
+            # mail
+            rambox-bin
+            # android
+            android-studio android-sdk android-sdk-platform-tools
+            # code
+            flutter swift-bin codelite-bin phpstorm webstorm webstorm-eap lighttable-bin
+            # python
+            anaconda python-plotly
+            # web
+            parcel-bundler
+            # javascript/css
+            esbuild-bin runjs-bin
+            # database
+            dbgate-bin
+            # system
+            system-monitoring-center whatpulse
+            # photos
+            metadata-cleaner lunacy-bin annotator photoprism fastflix
+            # drawing
+            figma-linux-bin ipe krita-plus-bin
+            # 3d
+            f3d maya maya-arnold blockbench-bin
+            # simulation
+            openfoam-com-git
+            # map
+            google-earth-pro
+            # 3d printer
+            octoprint
+            # USB
+            imagewriter etcher-bin woeusb
+            # VM
+            vmware-workstation vmware-unlocker
+            # math
+            plots scilab-bin wxmaxima genius mathjax
+            # edu
+            openboard lean4-bin
+            # finance
+            portfolio-performance-bin
+            # diagram
+            drawio-desktop-bin
+            # flight simulator
+            flightgear
+            # stock
+            jstock
+            # playstation & nintendo
+            rpcs3-bin yuzu-mainline-bin
+            # glfw
+            glfw-git
+            # control
+            dots-stable
+            # remote
+            anydesk-bin rustdesk-bin
+            # gaming
+            legendary
+            # touch
+            touchegg
+            # transtation
+            go-translation-git
+            # nvidia optimus
+            optimus-manager envycontrol
+            # CPU
+            corectrl
+            # http
+            hetty
+            # netgear
+            nmrpflash-bin
+            # bandwidth
+            peer2profit
+            # wine
+            winegui-bin dxvk-bin
+        )
+
+        if grep -q btrfs /etc/fstab; then
+            AUR_PACKAGE+=(
+                btrfs-assistant
+            )
+        fi
+
+    fi
+
+    if [[ $COMPUTER == "server" ]]; then
+
+        PACKAGES+=(
+            # SSL/TLS
+            certbot
+            # php
+            php php-apcu php-cgi php-phpdbg php-fpm php-geoip php-imagick php-intl php-gd php-phpdbg php-memcache php-memcached php-redis php-snmp
+            # php admin
+            phpmyadmin
+            # database
+            mariadb
+            # mail
+            postfix postfix-mysql postfix-pcre postfixadmin dovecot dovecot-mysql opendkim cyrus-sasl
+        )
+
+        AUR_PACKAGE=(
+            # browser
+            google-chrome
+            # server
+            openlitespeed
+            # http
+            hetty
+        )
+
+    fi
+
+    if [[ $COMPUTER == "miner" ]]; then
+        AUR_PACKAGE=(
+            # browser
+            google-chrome
+            # miner
+            trex-bin gminer-bin lolminer phoenixminer-bin teamredminer-bin
+        )
+    fi
+
+}
+
+menu() {
+
+    echo -e "\n --> $1:\n"
+    output=$2
+    shift 2
+    options=($@)
+    i=0
+    while true; do
+        for option in ${options[@]}; do
+            if [[ $option == ${options[$i]} ]]; then
+                echo -e "\t\e[7m$option\e[0m"
+            else
+                echo -e "\t$option"
+            fi
+        done
+        read -sn3 key
+        if [[ $key == $(echo -en "\e[A") ]] && [[ $i -gt 0 ]]; then
+            i=$(($i-1))
+        elif [[ $key == $(echo -en "\e[B") ]] && [[ $i -lt ${#options[@]} ]]; then
+            i=$(($i+1))
+        elif [[ -z $key ]]; then
+            break
+        fi
+        echo -en "\e[${#options[@]}A"
+    done
+    printf -v $output "${options[$i]}"
+
+}
+
+setup_drive() {
+
+    echo -e "\t\t\tcreated by Saif AlSubhi"
+    echo "-------------------------------------------------------------------------------------------------"
+    lsblk -o name,size,mountpoint,fstype,label,model
+    echo "-------------------------------------------------------------------------------------------------"
+
+    location="/dev/disk/by-id/"
+
+    DRIVES=($(ls $location | grep -Ew "^ata-.*|^nvme-.*|^scsi-.*|^usb-.*" | grep -v ".*-part"))
+
+    menu "select a drive" DRIVE ${DRIVES[@]}
+
+    PARTITIONS=($(ls $location | grep $DRIVE | grep part))
+
+    if [ $PARTITIONS ]; then
+        menu "select a partition" PARTITION ${PARTITIONS[@]}
+        ROOT_DRIVE=$location"$PARTITION"
+        PARTITIONS=($(ls $location | grep part))
+        menu "select a boot partition to mount " PARTITION ${PARTITIONS[@]}
+        BOOT_DRIVE=$location"$PARTITION"
+    fi
+
+    DRIVE=$location"$DRIVE"
+
+    FILESYSTEMS=(btrfs xfs zfs)
+    menu "select a filesystem" FILESYSTEM ${FILESYSTEMS[@]}
+
+    COMPUTERS=(minimal miner server workstation)
+    menu "select a computer" COMPUTER ${COMPUTERS[@]}
+
+    DESKTOPS=(gnome kde)
+    menu "select a desktop" DESKTOP ${DESKTOPS[@]}
+
+    AUR_INSTALLERS=(aura pamac paru yay)
+    menu "select AUR installer" AUR_INSTALLER ${AUR_INSTALLERS[@]}
+
+    if [[ ! $ROOT_DRIVE ]]; then
+        echo ">>> wiping filesystm"
+        wipefs -a -f $DRIVE
+        echo ">>> creating GPT"
+        sgdisk -o -U $DRIVE
+        echo ">>> creating boot partition"
+        sgdisk -n 1:0:+"$BOOTSIZE"M -c 1:BOOT -t 1:ef00 $DRIVE
+        echo ">>> creating root partition"
+        if [[ $FILESYSTEM == "zfs" ]]; then
+            sgdisk -n 2:0:0 -c 2:ROOT -t 2:bf00 $DRIVE
+        else
+            sgdisk -n 2:0:0 -c 2:ROOT -t 2:8300 $DRIVE
+        fi
+        BOOT_DRIVE=$DRIVE"-part1"
+        ROOT_DRIVE=$DRIVE"-part2"
+        echo ">>> creating boot filesystem"
+        sleep 1 && mkfs.fat -F32 -n BOOT $BOOT_DRIVE
+    fi
+
+    echo ">>> creating root filesystem"
+    if [[ $FILESYSTEM == "zfs" ]]; then
+        create_zfs
+    elif [[ $FILESYSTEM == "btrfs" ]]; then
+        mkfs.btrfs -f -L ROOT $ROOT_DRIVE
+    elif [[ $FILESYSTEM == "xfs" ]]; then
+        mkfs.xfs -f -L ROOT $ROOT_DRIVE
+    fi
+
+    mount_root
+    mount_boot
+    install_base
+
+}
+
+create_zfs() {
+
+    echo ">>> loading ZFS modules"
+    modprobe zfs
+    echo ">>> checking ZFS modules"
+    if ! lsmod | grep -qi zfs; then
+        echo 'ERROR: ZFS modules are missing'
+        FILESYSTEM=''
+        create_rootfs
+    fi
+    echo ">>> creating ZFS pool"
+    zpool create -f -o ashift=13 -o autotrim=on \
+    -O recordsize=8192 -O acltype=posixacl -O compression=lz4 \
+    -O canmount=noauto -O devices=off \
+    -O primarycache=metadata -O redundant_metadata=most -O logbias=throughput \
+    -O sync=disabled -O relatime=off -O atime=off \
+    -O xattr=sa -O overlay=on \
+    -O dnodesize=auto -O normalization=formD \
+    -O mountpoint=/ -R /mnt zroot $ROOT_DRIVE
+    echo ">>> setting ZFS"
+    zfs set secondarycache=all zroot
+    echo ">>> adding ZFS options"
+    echo "options zfs l2arc_noprefetch=0" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs l2arc_write_max=536870912" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs l2arc_write_boost=536870912" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs l2arc_headroom=12" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_arc_max=536870912" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_arc_min=33554432" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_prefetch_disable=0" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_top_maxinflight=320" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_txg_timeout=15" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_scheduler=deadline" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_async_read_min_active=8" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_async_read_max_active=32" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_async_write_min_active=8" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_async_write_max_active=32" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_sync_write_min_active=8" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_sync_write_max_active=32" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_sync_read_min_active=8" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_sync_read_max_active=32" >> /etc/modprobe.d/zfs.conf
+    mkdir -p /mnt/etc/modprobe.d
+    mv /etc/modprobe.d/zfs.conf /mnt/etc/modprobe.d/zfs.conf
+    echo ">>> mounting ZFS"
+    mount_root
+    echo ">>> checking ZFS pool"
+    zpool status
+    echo ">>> setting bootfs & cache"
+    zpool set bootfs=zroot zroot
+    zpool set cachefile=/etc/zfs/zpool.cache zroot
+    mkdir -p /mnt/etc/zfs
+    mv /etc/zfs/zpool.cache /mnt/etc/zfs/zpool.cache
+
+}
+
+mount_root() {
+
+    echo ">>> mounting root drive"
+    if [[ $FILESYSTEM == "zfs" ]]; then
+        echo ">>> exporting ZFS"
+        zpool export zroot
+        echo ">>> importing ZFS"
+        zpool import -d $ROOT_DRIVE -R /mnt zroot -N
+        echo ">>> mounting ZFS root"
+        zfs mount zroot
+        zfs mount -a
+    else
+        mount $ROOT_DRIVE /mnt
+    fi
+
+    if [[ ! -d /mnt/boot ]]; then
+        mkdir -p /mnt/boot
+    fi
+
+}
+
+mount_boot() {
+
+    echo ">>> mounting boot drive"
+    mount $BOOT_DRIVE /mnt/boot
+
+}
+
+update_packages() {
+
+    if grep -Ewq "#ParallelDownloads" /etc/pacman.conf; then
+        sed -i 's/\#ParallelDownloads = 5/ParallelDownloads = 10/' /etc/pacman.conf
+    fi
+
+    if grep -Ewq "#Color" /etc/pacman.conf; then
+        sed -i 's/\#Color/Color/' /etc/pacman.conf
+    fi
+
+    if [[ -f /var/lib/pacman/db.lck ]]; then
+        rm /var/lib/pacman/db.lck
+    fi
+
+    echo ">>> updating packages"
+    pacman -Syu --needed --noconfirm
+
+}
+
+install_base() {
+
+    sed -i 's/pacman_args+=(--noconfirm)/pacman_args+=(--needed --noconfirm)/' /usr/bin/pacstrap
+
+    update_packages
+    echo ">>> installing base packages"
+    pacstrap /mnt base
+    echo ">>> installing development packages"
+    pacstrap /mnt base base-devel
+    echo ">>> installing linux"
+    pacstrap /mnt linux
+    echo ">>> installing linux-firmware"
+    pacstrap /mnt linux-firmware
+    echo ">>> installing linux-headers"
+    pacstrap /mnt linux-headers
+    echo ">>> installing DKMS"
+    pacstrap /mnt dkms
+    echo ">>> installing microcode"
+    if [[ -f /mnt/boot/amd-ucode.img ]]; then
+        rm /mnt/boot/amd-ucode.img
+    fi
+    if [[ -f /mnt/boot/intel-ucode.img ]]; then
+        rm /mnt/boot/intel-ucode.img
+    fi
+    pacstrap /mnt amd-ucode intel-ucode
+
+    set_fstab
+
+}
+
+set_fstab() {
+
+    echo ">>> setting fstab"
+    genfstab -U -p /mnt >> /mnt/etc/fstab
+    if grep -q zfs /mnt/etc/fstab; then
+        sed -i 's/^zroot/#zroot/g' /mnt/etc/fstab
+    fi
+    sed -i 's/relatime,space_cache=v2/noatime,compress=zstd:1,ssd,discard=async/g' /mnt/etc/fstab
+
+    change_root
+
+}
+
+change_root() {
+
+    echo ">>> creating check file"
+    if [[ ! -f /mnt/root/chroot ]]; then
+        echo $COMPUTER > /mnt/root/chroot
+    fi
+    if [[ ! -f /mnt/root/desktop ]]; then
+        echo $DESKTOP > /mnt/root/desktop
+    fi
+    if [[ ! -f /mnt/root/aur ]]; then
+        echo $AUR_INSTALLER > /mnt/root/aur
+    fi
+
+    echo ">>> moving install script"
+    if [[ -f install ]]; then
+        mv install /mnt/root/install
+    fi
+
+    echo ">>> changing root"
+    arch-chroot /mnt sh /root/install
+
+}
+
+configure() {
+
+    if [[ $SWAPFILE -gt 0 ]]; then
+        create_swap_file
+    fi
+    set_hostname
+    set_hosts
+    disable_root
+    create_user
+    set_user_password
+    set_timezone
+    set_locale
+    setup_desktop
+
+}
+
+create_swap_file() {
+
+    echo ">>> creating swap file"
+    if grep -q zfs /etc/fstab; then
+        zfs create -V "$SWAPFILE"M -b $(getconf PAGESIZE) -o compression=zle \
+        -o logbias=throughput -o sync=always -o primarycache=metadata \
+        -o secondarycache=none -o com.sun:auto-snapshot=false zroot/swap
+        mkswap -f "$ROOT_DRIVE"/zroot/swap
+        swapon "$ROOT_DRIVE"/zroot/swap
+        if ! grep -Ew "/swap none swap discard 0 0" /etc/fstab; then
+            echo '/dev/zvol/zroot/swap none swap discard 0 0' >> /etc/fstab
+        fi
+    fi
+
+    if [[ ! -f /swapfile ]]; then
+        dd if=/dev/zero of=/swapfile bs=1M count=$SWAPFILE status=progress
+    fi
+
+    if [[ -f /swapfile ]]; then
+        chmod 600 /swapfile
+        mkswap -f /swapfile
+        swapon /swapfile
+    fi
+
+    if ! grep -Ew "/swapfile none swap defaults 0 0" /etc/fstab; then
+        echo '/swapfile none swap defaults 0 0' >> /etc/fstab
+    fi
+
+}
+
+set_hostname() {
+
+    echo ">>> setting hostname"
+    read -p " --> hostname: " HOSTNAME
+    echo "$HOSTNAME" > /etc/hostname
+
+}
+
+set_hosts() {
+
+    echo "127.0.0.1 localhost" > /etc/hosts
+    echo "::1       localhost" >> /etc/hosts
+    echo "127.0.1.1 $HOSTNAME.localdomain $HOSTNAME" >> /etc/hosts
+
+}
+
+disable_root() {
+
+    echo ">>> disabling root"
+    passwd -l root
+
+}
+
+create_user() {
+
+    echo ">>> creating user"
+    read -p " --> username: " USER
+    if id $USER &>/dev/null; then
+        userdel $USER
+    fi
+
+    useradd -m -g users -G wheel -s /bin/bash $USER || create_user
+    echo "$USER ALL=(ALL) ALL" > /etc/sudoers.d/$USER
+
+}
+
+set_user_password() {
+
+    echo ">>> setting user password"
+    read -sp " --> $USER password: " USER_PASSWORD
+    read -sp " --> $USER password (confirm): " check
+    if [[ $USER_PASSWORD != $check ]]; then
+        echo "ERROR: password does not match"
+        set_user_password
+    fi
+    echo -en "$USER_PASSWORD\n$USER_PASSWORD" | passwd $USER
+
+}
+
+set_timezone() {
+
+    echo ">>> setting timezone"
+    if [[ -f /usr/share/zoneinfo/$TIMEZONE ]]; then
+        ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+        hwclock --systohc --utc
+    else
+        read -p " --- TimeZone Asia/Muscat: " TIMEZONE
+        set_timezone
+    fi
+
+}
+
+set_locale() {
+
+    echo ">>> setting locale"
+    if [[ ! $LANGUAGE ]]; then
+        read -p " --- language en_US: " LANGUAGE
+        set_locale
+    fi
+    if [[ -f /etc/locale.conf ]]; then
+        rm /etc/locale.conf
+    fi
+    for LANG in ${LANGUAGE[@]}; do
+        if grep -Ew "$LANG" /etc/locale.gen; then
+            sed -i "s/^#$LANG.UTF-8/$LANG.UTF-8/" /etc/locale.gen
+            echo "LANG=$LANG.UTF-8" >> /etc/locale.conf
+        fi
+    done
+    locale-gen
+
+    echo "LOCALE='en_US.UTF-8'" > /etc/vconsole.conf
+    echo "KEYMAP='us'" >> /etc/vconsole.conf
+    for KEYMAP in ${KEYMAPS[@]}; do
+        if localectl list-keymaps | grep -qi "$KEYMAP"; then
+            echo "KEYMAP_TOGGLE=$KEYMAP" >> /etc/vconsole.conf
+        fi
+    done
+    echo "USECOLOR='yes'" >> /etc/vconsole.conf
+
+}
+
+setup_desktop() {
+
+    if grep -q zfs /etc/fstab; then
+        set_zfs
+        enable_zfs_services
+    fi
+    packages_list
+    install_packages
+
+    if [[ $AUR_INSTALLER == "aura" ]]; then
+        if ! command -v aura; then
+            install_aura
+        fi
+    fi
+    if [[ $AUR_INSTALLER == "pamac" ]]; then
+        if ! command -v pamac; then
+            install_pamac
+        fi
+    fi
+    if [[ $AUR_INSTALLER == "paru" ]]; then
+        if ! command -v paru; then
+            install_paru
+        fi
+    fi
+    if [[ $AUR_INSTALLER == "yay" ]]; then
+        if ! command -v yay; then
+            install_yay
+        fi
+    fi
+
+    install_aur_packages
+    clean_packages
+    enable_services
+    add_commands
+    set_initcpio
+
+}
+
+set_zfs() {
+
+    echo ">>> installing zfs-linux"
+
+    if [[ ! -d /home/$USER/zfs ]]; then
+        mkdir /home/$USER/zfs
+    fi
+    chown -R $USER /home/$USER/zfs
+    chmod -R 770 /home/$USER/zfs
+    cd /home/$USER/zfs
+    curl -LO raw.githubusercontent.com/0free/archlinux/1/PKGBUILD
+    sudo -u $USER makepkg -sic --needed --noconfirm
+    rm -r /home/$USER/zfs && cd /root
+
+    MODULES+=' zfs'
+    sed -i 's/block filesystems keyboard fsck/block keyboard zfs filesystems/' /etc/mkinitcpio.conf
+    modprobe zfs
+
+}
+
+install_packages() {
+
+    echo ">>> enabling multilib"
+    sed -iz 's/\#\[multilib\]\n\#Include/\[multilib\]\nInclude/' /etc/pacman.conf
+    sed -i ':a;N;s/\#\[multilib\]\n\#Include/\[multilib\]\nInclude/g;ba' /etc/pacman.conf
+ 
+    update_packages
+
+    list=''
+
+    for i in ${!PACKAGES[@]}; do
+        list+=' '
+        list+=${PACKAGES[$i]}
+    done
+
+    # fielsystem
+    if grep -q btrfs /etc/fstab; then
+        list+=' grub-btrfs'
+    fi
+
+    # intel GPU
+    list+=' xf86-video-intel vulkan-intel'
+    MODULES+=' i915 intel_agp'
+    # nvidia GPU
+    list+=' nvidia-open-dkms'
+    MODULES+=' nvidia nvidia_modeset nvidia_uvm nvidia_drm'
+    # amd GPU
+    list+=' xf86-video-amdgpu mesa amdvlk vulkan-radeon vulkan-mesa-layers'
+    MODULES+=' amdgpu'
+
+    # install all packages
+    echo ">>> installing packages"
+    pacman -S --needed --noconfirm $list
+
+}
+
+install_aura() {
+
+    echo ">>> installing aura"
+    if [[ ! -d /home/$USER/aura-bin ]]; then
+        echo ">>> cloning aura-bin"
+        cd /home/$USER/
+        git clone https://aur.archlinux.org/aura-bin.git
+    fi
+    chown -R $USER /home/$USER/aura-bin
+    chmod -R 770 /home/$USER/aura-bin
+    cd /home/$USER/aura-bin
+    faillock --user $USER --reset
+    sudo -u $USER makepkg -sic --needed --noconfirm
+    rm -r /home/$USER/aura-bin && cd /root
+
+}
+
+install_pamac() {
+
+    echo ">>> installing pamac"
+    if [[ ! -d /home/$USER/pamac-aur-git ]]; then
+        echo ">>> cloning pamac-aur-git"
+        cd /home/$USER/
+        git clone https://aur.archlinux.org/pamac-aur-git.git
+    fi
+    chown -R $USER /home/$USER/pamac-aur-git
+    chmod -R 770 /home/$USER/pamac-aur-git
+    cd /home/$USER/pamac-aur-git
+    faillock --user $USER --reset
+    sudo -u $USER makepkg -sic --needed --noconfirm
+    rm -r /home/$USER/pamac-aur-git && cd /root
+
+}
+
+install_paru() {
+
+    echo ">>> installing paru"
+    if [[ ! -d /home/$USER/paru-bin ]]; then
+        echo ">>> cloning paru-bin"
+        cd /home/$USER/
+        git clone https://aur.archlinux.org/paru-bin.git
+    fi
+    chown -R $USER /home/$USER/paru-bin
+    chmod -R 770 /home/$USER/paru-bin
+    cd /home/$USER/paru-bin
+    faillock --user $USER --reset
+    sudo -u $USER makepkg -sic --needed --noconfirm
+    rm -r /home/$USER/paru-bin && cd /root
+
+}
+
+install_yay() {
+
+    echo ">>> installing yay"
+    if [[ ! -d /home/$USER/yay-bin ]]; then
+        echo ">>> cloning yay-bin"
+        cd /home/$USER/
+        git clone https://aur.archlinux.org/yay-bin.git
+    fi
+    chown -R $USER /home/$USER/yay-bin
+    chmod -R 770 /home/$USER/yay-bin
+    cd /home/$USER/yay-bin
+    faillock --user $USER --reset
+    sudo -u $USER makepkg -sic --needed --noconfirm
+    rm -r /home/$USER/yay-bin && cd /root
+
+}
+
+install_aur_packages() {
+
+    echo ">>> installing AUR packages"
+    list=''
+    for i in ${!AUR_PACKAGE[@]}; do
+        list+=' '
+        list+=${AUR_PACKAGE[$i]}
+    done
+
+    faillock --user $USER --reset
+
+    if [[ $AUR_INSTALLER == "aura" ]]; then
+        aura -Auac --devel --noconfirm $list
+    fi
+
+    if [[ $AUR_INSTALLER == "pamac" ]]; then
+        pamac build --no-confirm $list
+    fi
+
+    if [[ $AUR_INSTALLER == "paru" ]]; then
+        sudo -u $USER yay -S --needed --noconfirm $list
+    fi
+
+    if [[ $AUR_INSTALLER == "yay" ]]; then
+        sudo -u $USER yay -S --needed --noconfirm --batchinstall --answerclean None --answerdiff None --nocleanmenu --nodiffmenu --noeditmenu --noupgrademenu --removemake --noredownload --noprovides --norebuild --sudoloop --mflags "--needed --noconfirm" $list
+    fi
+
+}
+
+clean_packages() {
+
+    echo ">>> cleaning packages"
+    pacman -Scc --noconfirm
+    if [[ $AUR_INSTALLER == "aura" ]]; then
+        aura -Ac --noconfirm
+    fi
+    if [[ $AUR_INSTALLER == "pamac" ]]; then
+        pamac clean --no-confirm
+    fi
+    if [[ $AUR_INSTALLER == "paru" ]]; then
+        sudo -u $USER paru -Sc --noconfirm
+    fi
+    if [[ $AUR_INSTALLER == "yay" ]]; then
+        sudo -u $USER yay -Yc && sudo -u $USER yay -Scc
+    fi
+
+
+}
+
+enable_services() {
+
+    echo ">>> enabling services"
+    systemctl enable gdm
+    systemctl enable NetworkManager
+    systemctl enable systemd-networkd
+    systemctl enable systemd-resolved
+    systemctl enable ufw
+    systemctl enable bluetooth
+
+    if [[ $COMPUTER == "workstation" ]]; then
+        systemctl enable cups
+    fi
+
+    if [[ $COMPUTER == "server" ]]; then
+        systemctl enable mariadb
+        systemctl enable mysql
+        systemctl enable mysqld
+        systemctl enable lshttpd
+        systemctl enable postfix
+        systemctl enable dovecot
+        systemctl enable opendkim
+        mkdir /var/mysql && chown -R mysql /var/mysql
+        mkdir /var/log/mysql && chown -R mysql /var/log/mysql
+    fi
+
+}
+
+enable_zfs_services() {
+
+    echo ">>> enabling ZFS services"
+    systemctl enable zfs-import-cache
+    systemctl enable zfs-import-scan
+    systemctl enable zfs-mount
+    systemctl enable zfs-share
+    systemctl enable zfs-zed
+    systemctl enable zfs.target
+
+}
+
+add_commands() {
+
+    echo ">>> adding bash aliases"
+    echo "# custom commands" >> /home/$USER/.bashrc
+    echo "alias install='sudo pacman -S --needed --noconfirm'" >> /home/$USER/.bashrc
+    echo "alias remove='sudo pacman -R --noconfirm'" >> /home/$USER/.bashrc
+    echo "alias c='clear'" >> /home/$USER/.bashrc
+    echo "alias edit='SUDO_EDITOR=gedit sudoedit'" >> /home/$USER/.bashrc
+    echo "alias enable='sudo systemctl enable'" >> /home/$USER/.bashrc
+    echo "alias restart='sudo systemctl restart'" >> /home/$USER/.bashrc
+    echo "alias status='sudo systemctl status'" >> /home/$USER/.bashrc
+
+    if [[ $AUR_INSTALLER == "aura" ]]; then
+        echo "alias update='sudo pacman -Syu --needed --noconfirm && sudo aura -Auac --devel --noconfirm'" >> /home/$USER/.bashrc
+        echo "alias aur='sudo aura -S --needed --noconfirm'" >> /home/$USER/.bashrc
+        echo "alias remove-aur='aura -R --noconfirm'" >> /home/$USER/.bashrc
+        echo "alias clean='sudo pacman -Scc --noconfirm && aura -Ac --noconfirm'" >> /home/$USER/.bashrc
+    fi
+
+    if [[ $AUR_INSTALLER == "pamac" ]]; then
+        echo "alias update='sudo pacman -Syu --needed --noconfirm && sudo pamac update -a --no-confirm && pamac upgrade -a --no-confirm'" >> /home/$USER/.bashrc
+        echo "alias aur='sudo pamac build --no-confirm'" >> /home/$USER/.bashrc
+        echo "alias remove-aur='pamac remove -u --no-confirm'" >> /home/$USER/.bashrc
+        echo "alias clean='sudo pacman clean --no-confirm'" >> /home/$USER/.bashrc
+    fi
+
+    if [[ $AUR_INSTALLER == "paru" ]]; then
+        echo "alias update='sudo pacman -Syu --needed --noconfirm && paru -Sua'" >> /home/$USER/.bashrc
+        echo "alias aur='paru -S --needed --noconfirm'" >> /home/$USER/.bashrc
+        echo "alias remove-aur='paru -R --noconfirm'" >> /home/$USER/.bashrc
+        echo "alias clean='sudo pacman -Scc --noconfirm && paru -Sc --noconfirm'" >> /home/$USER/.bashrc
+    fi
+
+    if [[ $AUR_INSTALLER == "yay" ]]; then
+        echo "alias update='sudo pacman -Syu --needed --noconfirm && yay -Syu --needed --noconfirm'" >> /home/$USER/.bashrc
+        echo "alias aur='yay -S --needed --noconfirm --batchinstall --answerclean None --answerdiff None --nocleanmenu --nodiffmenu --noeditmenu --noupgrademenu --removemake --noredownload --noprovides --norebuild --sudoloop --mflags \"--noconfirm\"'" >> /home/$USER/.bashrc
+        echo "alias remove-aur='yay -R --noconfirm'" >> /home/$USER/.bashrc
+        echo "alias clean='sudo pacman -Scc --noconfirm && yay -Yc --mflags \"--noconfirm\" && yay -Scc --mflags \"--noconfirm\"'" >> /home/$USER/.bashrc
+    fi
+
+    if [[ $COMPUTER == "server" ]]; then
+        echo "alias blacklist='sh ~/blacklist.sh'" >> /home/$USER/.bashrc
+        echo "alias lsws-log='sudo rm /opt/lsws/logs/*'" >> /home/$USER/.bashrc
+        echo "alias clog='sudo rm /var/log/*log*'" >> /home/$USER/.bashrc
+        echo "alias mysql='mysql -u root -p'" >> /home/$USER/.bashrc
+    fi
+
+    if [[ $COMPUTER == "miner" ]]; then
+        echo "alias trex='t-rex -c ~/config.json'" >> /home/$USER/.bashrc
+    fi
+
+}
+
+set_initcpio() {
+
+    if grep -q btrfs /etc/fstab; then
+        MODULES+=' btrfs'
+    fi
+
+    sed -i "s|^MODULES=()|MODULES=($MODULES)|" /etc/mkinitcpio.conf
+
+    echo ">>> configuring initial ramdisk"
+    mkinitcpio -p linux
+
+    finish
+
+}
+
+finish() {
+
+    if mountpoint -q /boot; then
+        if [[ ! -f /boot/grub/grub.cfg ]]; then
+            install_grub
+        fi
+    fi
+
+    rm /root/*
+
+    if grep -q zfs /etc/fstab; then
+        echo ">>> un-mount ZFS"
+        zpool export zroot
+        zfs umount -a
+    fi
+
+    echo ">>> un-mount and reboot"
+    umount -a && exit && exit && reboot
+
+}
+
+install_grub() {
+
+    echo ">>> installing grub bootloader"
+    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=linux
+
+    if grep -q zfs /etc/fstab; then
+        sed -i 's#^GRUB_CMDLINE_LINUX=""#GRUB_CMDLINE_LINUX="root=ZFS=zroot/ROOT/archlinux"#' /etc/default/grub
+        echo 'export ZPOOL_VDEV_NAME_PATH=YES' >> /etc/profile.d/zpool_vdev_name_path.sh
+        source /etc/profile.d/zpool_vdev_name_path.sh
+        echo 'Defaults env_keep += "ZPOOL_VDEV_NAME_PATH"' >> /etc/sudoers
+        sed -i "s|rpool=.*|rpool=\`zdb -l \${GRUB_DEVICE} \| grep -E '[[:blank:]]name' \| cut -d\\\' -f 2\`|" /etc/grub.d/10_linux
+    fi
+
+    git clone https://github.com/0free/grub-theme.git
+    mv grub-theme /boot/grub/themes/
+
+    sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=1/' /etc/default/grub
+
+    sed -i 's|#GRUB_THEME="path/to/gfxtheme"|GRUB_THEME="/boot/grub/themes/grub-theme/theme.txt"|' /etc/default/grub
+
+    echo ">>> making grub config"
+    grub-mkconfig -o /boot/grub/grub.cfg
+
+}
+
+clear && set -e
+
+if [[ -f /root/chroot ]]; then
+    COMPUTER=$(cat /root/chroot)
+    DESKTOP=$(cat /root/desktop)
+    AUR_INSTALLER=$(cat /root/aur)
+    if [ $(find /home -maxdepth 1 -type d | wc -l) -ne 1 ]; then
+        USER=$(ls /home)
+        if grep -qEw "# custom commands" "/home/$USER/.bashrc"; then
+            set_initcpio
+        else
+            setup_desktop
+        fi
+    else
+        configure
+    fi
+else
+    if mountpoint -q /mnt; then
+        if [[ -f /mnt/etc/fstab ]]; then
+            change_root
+        else
+            install_base
+        fi
+    else
+        setup_drive
+    fi
+fi
+
+#end
