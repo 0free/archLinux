@@ -11,12 +11,14 @@ MODULES=''
 packages_list() {
 
     PACKAGES=(
-        # development
-        base-devel
         # linux
-        linux linux-headers linux-firmware dkms
+        linux linux-headers linux-firmware linux-lts linux-lts-headers
         # micro-codes
         amd-ucode intel-ucode
+        # development
+        base-devel
+        # dkms
+        dkms
         # efi boot
         efibootmgr grub grub-customizer
         # utilities
@@ -26,11 +28,11 @@ packages_list() {
         # xorg
         xorg-xwayland
         # filesystem
-        os-prober gptfdisk dosfstools mtools ntfs-3g ntfsprogs btrfs-progs xfsprogs f2fs-tools udftools
+        lvm2 os-prober gptfdisk dosfstools mtools ntfs-3g ntfsprogs btrfs-progs xfsprogs f2fs-tools udftools
         # network
-        networkmanager network-manager-applet gufw rsync
+        networkmanager netctl gufw
         # wireless
-        archlinux-keyring wpa_supplicant
+        wpa_supplicant wireless_tools
         # bluetooth
         bluez bluez-utils
         # audio
@@ -39,6 +41,8 @@ packages_list() {
         fwupd fwupd-efi
         # trackpad
         xf86-input-synaptics
+        # pacman
+        archlinux-keyring
     )
 
     if [[ $desktop == "gnome" ]]; then
@@ -47,7 +51,7 @@ packages_list() {
             # gnome session
             gdm gnome-session gnome-shell gnome-shell-extensions gnome-control-center gnome-tweaks gnome-menus
             # gnome tools
-            gnome-keyring seahorse gnome-terminal gnome-disk-utility nautilus gedit gedit-plugins gnome-system-monitor
+            gnome-keyring seahorse gnome-terminal gnome-disk-utility nautilus gedit gedit-plugins gnome-system-monitor network-manager-applet
             # firmware
             gnome-firmware
         )
@@ -802,7 +806,7 @@ install_zfs() {
     rm -r /home/$USER/zfs && cd /root
 
     MODULES+=' zfs'
-    sed -i 's/block filesystems keyboard fsck/block keyboard zfs filesystems/' /etc/mkinitcpio.conf
+    sed -i 's/block filesystems keyboard fsck/block lvm2 keyboard zfs filesystems/' /etc/mkinitcpio.conf
 
 }
 
@@ -1057,6 +1061,7 @@ set_initcpio() {
     fi
 
     sed -i "s|^MODULES=()|MODULES=($MODULES)|" /etc/mkinitcpio.conf
+    sed -i 's/block filesystems/block lvm2 filesystems/' /etc/mkinitcpio.conf
 
     echo ">>> configuring initial ramdisk"
     mkinitcpio -p linux
