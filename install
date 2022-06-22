@@ -230,7 +230,7 @@ packages_list() {
             # video edit
             davinci-resolve lightworks video-trimmer
             # audio edit
-            stargate 
+            #stargate 
             # youtube
             freetube-bin youtube-music-bin
             # download
