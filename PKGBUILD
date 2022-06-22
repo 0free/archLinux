@@ -19,7 +19,7 @@ pkgver() {
 
     cd "${srcdir}"/zfs
 
-    git describe --long | sed -i 's/^zfs-//;s/-rc/rc/;s/\([^-]*-g\)/r\1/;s/-/./g'
+    git describe --long | sed 's/^zfs-//;s/-rc/rc/;s/\([^-]*-g\)/r\1/;s/-/./g'
 
 }
 
