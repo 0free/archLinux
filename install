@@ -719,11 +719,11 @@ setup_desktop() {
     fi
 
     if [[ -f /boot/amd-ucode.img ]]; then
-        rm /mnt/boot/amd-ucode.img
+        rm /boot/amd-ucode.img
     fi
 
     if [[ -f /boot/intel-ucode.img ]]; then
-        rm /mnt/boot/intel-ucode.img
+        rm /boot/intel-ucode.img
     fi
 
     packages_list
