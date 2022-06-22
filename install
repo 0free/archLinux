@@ -11,6 +11,12 @@ MODULES=''
 packages_list() {
 
     PACKAGES=(
+        # development
+        base-devel
+        # linux
+        linux linux-headers linux-firmware dkms
+        # micro-codes
+        amd-ucode intel-ucode
         # efi boot
         efibootmgr grub grub-customizer
         # utilities
@@ -89,7 +95,7 @@ packages_list() {
         if [[ $desktop == "kde" ]]; then
             packages+=(
                 # kde app
-                kmix kmail kdenlive ktorrent kdeconnect kamera kamoso spectacle partitionmanager akregator okteta kjots
+                kmix kmail kdenlive ktorrent kdeconnect kamera kamoso okular spectacle partitionmanager akregator okteta kjots
                 # photo
                 kphotoalbum
                 # media
@@ -556,24 +562,6 @@ install_base() {
     update_packages
     echo ">>> installing base packages"
     pacstrap /mnt base
-    echo ">>> installing development packages"
-    pacstrap /mnt base base-devel
-    echo ">>> installing linux"
-    pacstrap /mnt linux
-    echo ">>> installing linux-firmware"
-    pacstrap /mnt linux-firmware
-    echo ">>> installing linux-headers"
-    pacstrap /mnt linux-headers
-    echo ">>> installing DKMS"
-    pacstrap /mnt dkms
-    echo ">>> installing microcode"
-    if [[ -f /mnt/boot/amd-ucode.img ]]; then
-        rm /mnt/boot/amd-ucode.img
-    fi
-    if [[ -f /mnt/boot/intel-ucode.img ]]; then
-        rm /mnt/boot/intel-ucode.img
-    fi
-    pacstrap /mnt amd-ucode intel-ucode
 
     set_fstab
 
@@ -758,6 +746,15 @@ setup_desktop() {
             install_zfs
         fi
     fi
+
+    if [[ -f /boot/amd-ucode.img ]]; then
+        rm /mnt/boot/amd-ucode.img
+    fi
+
+    if [[ -f /boot/intel-ucode.img ]]; then
+        rm /mnt/boot/intel-ucode.img
+    fi
+
     packages_list
     install_packages
 
