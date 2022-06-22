@@ -643,7 +643,7 @@ create_user() {
     if id $USER &>/dev/null; then
         userdel $USER
     fi
-    useradd -m -g users -G wheel -s /bin/bash $USER || create_user
+    useradd -m -g users -s /bin/bash $USER || create_user
     echo "$USER ALL=(ALL) ALL" > /etc/sudoers.d/$USER
 
 }
