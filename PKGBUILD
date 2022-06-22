@@ -1,6 +1,6 @@
 
 pkgname=zfs-dkms
-pkgver=2.1.99.r1257.g482505fd42
+pkgver=2.1.99.r1268.gdeb1213098
 pkgrel=1
 pkgdesc="Kernel modules for the Zettabyte File System"
 arch=('any')
