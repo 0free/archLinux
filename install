@@ -729,23 +729,18 @@ setup_desktop() {
     packages_list
     install_packages
 
-    if [[ $aur_installer == "aura" ]]; then
-        if ! command -v aura; then
+    if ! command -v $aur_installer; then
+        echo ">>> installing $aur_installer"
+        if [[ $aur_installer == "aura" ]]; then
             install_aura
         fi
-    fi
-    if [[ $aur_installer == "pamac" ]]; then
-        if ! command -v pamac; then
+        if [[ $aur_installer == "pamac" ]]; then
             install_pamac
         fi
-    fi
-    if [[ $aur_installer == "paru" ]]; then
-        if ! command -v paru; then
+        if [[ $aur_installer == "paru" ]]; then
             install_paru
         fi
-    fi
-    if [[ $aur_installer == "yay" ]]; then
-        if ! command -v yay; then
+        if [[ $aur_installer == "yay" ]]; then
             install_yay
         fi
     fi
@@ -815,7 +810,6 @@ install_packages() {
 
 install_aura() {
 
-    echo ">>> installing aura"
     if [[ ! -d /home/$USER/aura-bin ]]; then
         echo ">>> cloning aura-bin"
         cd /home/$USER/
@@ -832,7 +826,6 @@ install_aura() {
 
 install_pamac() {
 
-    echo ">>> installing pamac"
     if [[ ! -d /home/$USER/pamac-aur-git ]]; then
         echo ">>> cloning pamac-aur-git"
         cd /home/$USER/
@@ -849,7 +842,6 @@ install_pamac() {
 
 install_paru() {
 
-    echo ">>> installing paru"
     if [[ ! -d /home/$USER/paru-bin ]]; then
         echo ">>> cloning paru-bin"
         cd /home/$USER/
@@ -866,7 +858,6 @@ install_paru() {
 
 install_yay() {
 
-    echo ">>> installing yay"
     if [[ ! -d /home/$USER/yay-bin ]]; then
         echo ">>> cloning yay-bin"
         cd /home/$USER/
