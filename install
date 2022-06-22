@@ -1052,6 +1052,8 @@ finish() {
 
     rm /root/*
 
+    exit && exit
+
     if grep -q zfs /etc/fstab; then
         echo ">>> un-mount ZFS"
         zpool export zroot
@@ -1059,7 +1061,7 @@ finish() {
     fi
 
     echo ">>> un-mount and reboot"
-    umount -a && exit && exit && reboot
+    umount -a && reboot
 
 }
 
@@ -1117,9 +1119,9 @@ install_grub() {
 
     sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=1/' /etc/default/grub
 
-    sed -i 's|#GRUB_THEME="path/to/gfxtheme"|GRUB_THEME="/boot/grub/themes/grub-theme/theme.txt"|' /etc/default/grub
-
     sed -i 's/loglevel=3/loglevel=0/' /etc/default/grub
+
+    sed -i 's|#GRUB_THEME="path/to/gfxtheme"|GRUB_THEME="/boot/grub/themes/grub-theme/theme.txt"|' /etc/default/grub
 
     echo ">>> making grub config"
     grub-mkconfig -o /boot/grub/grub.cfg
