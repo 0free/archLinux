@@ -832,6 +832,8 @@ install_pamac() {
     chown -R $USER /home/$USER/pamac
     chmod -R 770 /home/$USER/pamac
     cd /home/$USER/pamac
+    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/libpamac/PKGBUILD
+    sudo -u $USER makepkg -sic --needed --noconfirm
     curl -LO https://raw.githubusercontent.com/0free/archlinux/1/pamac/PKGBUILD
     sudo -u $USER makepkg -sic --needed --noconfirm
     rm -r /home/$USER/pamac && cd /root
