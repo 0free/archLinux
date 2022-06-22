@@ -421,7 +421,7 @@ setup_drive() {
     desktops=(gnome kde)
     menu "select a desktop" desktop ${desktops[@]}
 
-    aur_installers=(aura paru yay)
+    aur_installers=(aura paru pikaur yay)
     menu "select AUR installer" aur_installer ${aur_installers[@]}
 
     if [[ ! $root_drive ]]; then
@@ -738,6 +738,9 @@ setup_desktop() {
         if [[ $aur_installer == "paru" ]]; then
             install_paru
         fi
+        if [[ $aur_installer == "pikaur" ]]; then
+            install_pikaur
+        fi
         if [[ $aur_installer == "yay" ]]; then
             install_yay
         fi
@@ -836,6 +839,21 @@ install_paru() {
 
 }
 
+install_pikaur() {
+
+    if [[ ! -d /home/$USER/pikaur ]]; then
+        echo ">>> cloning paru-bin"
+        cd /home/$USER/
+        git clone https://aur.archlinux.org/pikaur.git
+    fi
+    chown -R $USER /home/$USER/pikaur
+    chmod -R 770 /home/$USER/pikaur
+    cd /home/$USER/pikaur
+    sudo -u $USER makepkg -sic --needed --noconfirm
+    rm -r /home/$USER/pikaur && cd /root
+
+}
+
 install_yay() {
 
     if [[ ! -d /home/$USER/yay-bin ]]; then
@@ -866,6 +884,9 @@ install_aur_packages() {
     if [[ $aur_installer == "paru" ]]; then
         sudo -u $USER paru -S --needed --noconfirm $list
     fi
+    if [[ $aur_installer == "pikaur" ]]; then
+        sudo -u $USER pikaur -S --needed --noconfirm $list
+    fi
     if [[ $aur_installer == "yay" ]]; then
         sudo -u $USER yay -S --needed --noconfirm --batchinstall --answerclean None --answerdiff None --nocleanmenu --nodiffmenu --noeditmenu --noupgrademenu --removemake --noredownload --noprovides --norebuild --sudoloop --mflags "--needed --noconfirm" $list
     fi
@@ -877,10 +898,13 @@ clean_packages() {
     echo ">>> cleaning packages"
     pacman -Scc --noconfirm
     if [[ $aur_installer == "aura" ]]; then
-        sudo -u $USER aura -Ac --noconfirm
+        sudo -u $USER aura -Ac --builduser --noconfirm
     fi
     if [[ $aur_installer == "paru" ]]; then
         sudo -u $USER paru -Sc --noconfirm
+    fi
+    if [[ $aur_installer == "pikaur" ]]; then
+        sudo -u $USER pikaur -Scc --noconfirm
     fi
     if [[ $aur_installer == "yay" ]]; then
         sudo -u $USER yay -Yc && sudo -u $USER yay -Scc
@@ -951,6 +975,13 @@ add_commands() {
         echo "alias aur='paru -S --needed --noconfirm'" >> /home/$USER/.bashrc
         echo "alias remove-aur='paru -R --noconfirm'" >> /home/$USER/.bashrc
         echo "alias clean='sudo pacman -Scc --noconfirm && paru -Sc --noconfirm'" >> /home/$USER/.bashrc
+    fi
+
+    if [[ $aur_installer == "pikaur" ]]; then
+        echo "alias update='sudo pacman -Syu --needed --noconfirm && pikaur -Syu'" >> /home/$USER/.bashrc
+        echo "alias aur='pikaur -S --needed --noconfirm'" >> /home/$USER/.bashrc
+        echo "alias remove-aur='pikaur -R --noconfirm'" >> /home/$USER/.bashrc
+        echo "alias clean='sudo pacman -Scc --noconfirm && pikaur -Scc --noconfirm'" >> /home/$USER/.bashrc
     fi
 
     if [[ $aur_installer == "yay" ]]; then
