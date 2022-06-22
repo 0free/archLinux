@@ -708,12 +708,6 @@ set_locale() {
 
 setup_desktop() {
 
-    if grep -q zfs /etc/fstab; then
-        if ! grep -q " zfs " /etc/mkinitcpio.conf; then
-            install_zfs
-        fi
-    fi
-
     if [[ -f /boot/amd-ucode.img ]]; then
         rm /boot/amd-ucode.img
     fi
@@ -748,24 +742,11 @@ setup_desktop() {
     add_commands
     set_initcpio
 
-}
-
-install_zfs() {
-
-    echo ">>> installing zfs-linux"
-
-    if [[ ! -d /home/$USER/zfs ]]; then
-        mkdir /home/$USER/zfs
+    if grep -q zfs /etc/fstab; then
+        if ! grep -q " zfs " /etc/mkinitcpio.conf; then
+            install_zfs
+        fi
     fi
-    chown -R $USER /home/$USER/zfs
-    chmod -R 770 /home/$USER/zfs
-    cd /home/$USER/zfs
-    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/zfs/PKGBUILD
-    sudo -u $USER makepkg -sic --needed --noconfirm
-    rm -r /home/$USER/zfs && cd /root
-
-    MODULES+=' zfs'
-    sed -i 's/block filesystems keyboard fsck/block lvm2 keyboard zfs filesystems/' /etc/mkinitcpio.conf
 
 }
 
@@ -1014,6 +995,25 @@ set_initcpio() {
     mkinitcpio -p linux-lts
 
     finish
+
+}
+
+install_zfs() {
+
+    echo ">>> installing zfs-linux"
+
+    if [[ ! -d /home/$USER/zfs ]]; then
+        mkdir /home/$USER/zfs
+    fi
+    chown -R $USER /home/$USER/zfs
+    chmod -R 770 /home/$USER/zfs
+    cd /home/$USER/zfs
+    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/zfs/PKGBUILD
+    sudo -u $USER makepkg -sic --needed --noconfirm
+    rm -r /home/$USER/zfs && cd /root
+
+    MODULES+=' zfs'
+    sed -i 's/block filesystems keyboard fsck/block lvm2 keyboard zfs filesystems/' /etc/mkinitcpio.conf
 
 }
 
