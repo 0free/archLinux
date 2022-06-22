@@ -1119,6 +1119,8 @@ install_grub() {
 
     sed -i 's|#GRUB_THEME="path/to/gfxtheme"|GRUB_THEME="/boot/grub/themes/grub-theme/theme.txt"|' /etc/default/grub
 
+    sed -i 's/loglevel=3/loglevel=0/' /etc/default/grub
+
     echo ">>> making grub config"
     grub-mkconfig -o /boot/grub/grub.cfg
 
