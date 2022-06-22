@@ -6,7 +6,7 @@ pkgdesc="Graphical Package Manager for Manjaro Linux with Alpm, AUR, Appstream, 
 arch=('x86_64')
 url="https://gitlab.manjaro.org/applications/pamac"
 license=('GPL3')
-depends=('libnotify' 'libpamac>=11.3.1' 'libhandy')
+depends=('libnotify' 'libpamac' 'libhandy')
 makedepends=('gettext' 'itstool' 'vala' 'meson' 'ninja' 'gobject-introspection' 'xorgproto' 'asciidoc')
 options=(!emptydirs !strip)
 provides=('pamac')
