@@ -33,7 +33,7 @@ prepare() {
 /^\s*(module\/.*|${pkgname%-dkms}.release|Makefile)/!d
 }" configure.ac
 
-    sed -i 's/AM_GNU_GETTEXT/AM_GNU_GETTEXT_VERSION/g' configure.ac
+    sed -i "s/AM_GNU_GETTEXT/AM_GNU_GETTEXT_VERSION/g" configure.ac
 
     autoreconf -fi
 
