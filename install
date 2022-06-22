@@ -768,7 +768,7 @@ install_zfs() {
     chown -R $USER /home/$USER/zfs
     chmod -R 770 /home/$USER/zfs
     cd /home/$USER/zfs
-    curl -LO raw.githubusercontent.com/0free/archlinux/1/PKGBUILD
+    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/zfs/PKGBUILD
     sudo -u $USER makepkg -sic --needed --noconfirm
     rm -r /home/$USER/zfs && cd /root
 
@@ -1078,15 +1078,12 @@ create_swap_file() {
 
     if [[ ! -f /swapfile ]]; then
         dd if=/dev/zero of=/swapfile bs=1M count=$swapfile status=progress
-    fi
-
-    if [[ -f /swapfile ]]; then
         chmod 600 /swapfile
         mkswap -f /swapfile
         swapon /swapfile
     fi
 
-    if ! grep -Ew "/swapfile none swap defaults 0 0" /etc/fstab; then
+    if ! grep swapfile /etc/fstab; then
         echo '/swapfile none swap defaults 0 0' >> /etc/fstab
     fi
 
