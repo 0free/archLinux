@@ -651,8 +651,8 @@ create_user() {
 set_user_password() {
 
     echo ">>> setting user password"
-    read -sp " --> $USER password: " user_password
-    read -sp " --> $USER password (confirm): " check
+    read -sp " --> $USER password: " user_password && echo ''
+    read -sp " --> $USER password (confirm): " check && echo ''
     if [[ $user_password != $check ]]; then
         echo "ERROR: password does not match"
         set_user_password
