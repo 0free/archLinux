@@ -191,7 +191,7 @@ packages_list() {
             # php tools
             xdebug
             # glfw
-            glfw-x11 glfw-wayland
+            glfw-wayland
         )
 
         AUR_PACKAGE=(
