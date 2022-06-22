@@ -16,21 +16,21 @@ sha256sums=('SKIP')
 
 pkgver() {
 
-  cd $pkgname
+  cd $pkgname-$pkgver
   git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g' | cut -c2-48
 
 }
 
 prepare() {
 
-  cd $pkgname
+  cd $pkgname-$pkgver
   sed -i -e "s|\"$pkgver\"|\"$pkgver-$pkgrel\"|g" src/manager_window.vala
 
 }
 
 build() {
 
-  cd $pkgname
+  cd $pkgname-$pkgver
   mkdir -p builddir
   cd builddir
   meson --prefix=/usr --sysconfdir=/etc --buildtype=release -Denable-fake-gnome-software=true
@@ -40,9 +40,7 @@ build() {
 
 package() {
 
-  conflicts=('pamac-aur')
-  install=pamac.install
-  cd $pkgname
+  cd $pkgname-$pkgver
   cd builddir
   DESTDIR="$pkgdir" ninja install
   rm "$pkgdir/usr/bin/gnome-software"
