@@ -190,6 +190,8 @@ packages_list() {
             phpmyadmin
             # php tools
             xdebug
+            # glfw
+            glfw-x11 glfw-wayland
         )
 
         AUR_PACKAGE=(
@@ -281,8 +283,6 @@ packages_list() {
             jstock
             # playstation & nintendo
             rpcs3-bin yuzu-mainline-bin
-            # glfw
-            glfw-git
             # control
             dots-stable
             # remote
