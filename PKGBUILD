@@ -2,7 +2,7 @@
 pkgname=zfs-dkms
 pkgver=2.1.99.r1257.g482505fd42
 pkgrel=1
-pkgdesc="Kernel modules for the Zettabyte File System."
+pkgdesc="Kernel modules for the Zettabyte File System"
 arch=('any')
 url="https://zfsonlinux.org/"
 license=('CDDL')
@@ -19,7 +19,7 @@ pkgver() {
 
     cd "${srcdir}"/zfs
 
-    git describe --long | sed 's/^zfs-//;s/-rc/rc/;s/\([^-]*-g\)/r\1/;s/-/./g'
+    git describe --long | sed -i 's/^zfs-//;s/-rc/rc/;s/\([^-]*-g\)/r\1/;s/-/./g'
 
 }
 
@@ -32,6 +32,8 @@ prepare() {
 /]\)/n
 /^\s*(module\/.*|${pkgname%-dkms}.release|Makefile)/!d
 }" configure.ac
+
+    sed -i 's/AM_GNU_GETTEXT/AM_GNU_GETTEXT_VERSION/g' configure.ac
 
     autoreconf -fi
 
