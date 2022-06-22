@@ -842,7 +842,7 @@ install_paru() {
 install_pikaur() {
 
     if [[ ! -d /home/$USER/pikaur ]]; then
-        echo ">>> cloning paru-bin"
+        echo ">>> cloning pikaur"
         cd /home/$USER/
         git clone https://aur.archlinux.org/pikaur.git
     fi
