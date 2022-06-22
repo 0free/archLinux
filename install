@@ -731,6 +731,7 @@ setup_desktop() {
 
     if ! command -v $aur_installer; then
         echo ">>> installing $aur_installer"
+        faillock --user $USER --reset
         if [[ $aur_installer == "aura" ]]; then
             install_aura
         fi
@@ -818,7 +819,6 @@ install_aura() {
     chown -R $USER /home/$USER/aura-bin
     chmod -R 770 /home/$USER/aura-bin
     cd /home/$USER/aura-bin
-    faillock --user $USER --reset
     sudo -u $USER makepkg -sic --needed --noconfirm
     rm -r /home/$USER/aura-bin && cd /root
 
@@ -826,17 +826,15 @@ install_aura() {
 
 install_pamac() {
 
-    if [[ ! -d /home/$USER/pamac-aur-git ]]; then
-        echo ">>> cloning pamac-aur-git"
-        cd /home/$USER/
-        git clone https://aur.archlinux.org/pamac-aur-git.git
+    if [[ ! -d /home/$USER/pamac ]]; then
+        mkdir /home/$USER/pamac
     fi
-    chown -R $USER /home/$USER/pamac-aur-git
-    chmod -R 770 /home/$USER/pamac-aur-git
-    cd /home/$USER/pamac-aur-git
-    faillock --user $USER --reset
+    chown -R $USER /home/$USER/pamac
+    chmod -R 770 /home/$USER/pamac
+    cd /home/$USER/pamac
+    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/pamac/PKGBUILD
     sudo -u $USER makepkg -sic --needed --noconfirm
-    rm -r /home/$USER/pamac-aur-git && cd /root
+    rm -r /home/$USER/pamac && cd /root
 
 }
 
@@ -850,7 +848,6 @@ install_paru() {
     chown -R $USER /home/$USER/paru-bin
     chmod -R 770 /home/$USER/paru-bin
     cd /home/$USER/paru-bin
-    faillock --user $USER --reset
     sudo -u $USER makepkg -sic --needed --noconfirm
     rm -r /home/$USER/paru-bin && cd /root
 
@@ -866,7 +863,6 @@ install_yay() {
     chown -R $USER /home/$USER/yay-bin
     chmod -R 770 /home/$USER/yay-bin
     cd /home/$USER/yay-bin
-    faillock --user $USER --reset
     sudo -u $USER makepkg -sic --needed --noconfirm
     rm -r /home/$USER/yay-bin && cd /root
 
