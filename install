@@ -861,7 +861,7 @@ install_aur_packages() {
     done
     faillock --user $USER --reset
     if [[ $aur_installer == "aura" ]]; then
-        aura -Auac --devel --noconfirm $list
+        sudo aura -Auac --devel --noconfirm $list
     fi
     if [[ $aur_installer == "paru" ]]; then
         sudo -u $USER yay -S --needed --noconfirm $list
