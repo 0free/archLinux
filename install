@@ -15,8 +15,6 @@ packages_list() {
         linux linux-headers linux-firmware linux-lts linux-lts-headers
         # micro-codes
         amd-ucode intel-ucode
-        # development
-        base-devel
         # dkms
         dkms
         # efi boot
@@ -563,7 +561,7 @@ install_base() {
 
     update_packages
     echo ">>> installing base packages"
-    pacstrap /mnt base
+    pacstrap /mnt base base-devel
 
     set_fstab
 
