@@ -1096,7 +1096,13 @@ create_swap_file() {
 install_grub() {
 
     echo ">>> installing grub bootloader"
-    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=linux
+    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=linux --recheck
+
+    if [[ ! -d /boot/grub/locale ]]; then
+        mkdir /boot/grub/locale
+    fi
+
+    cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo
 
     if grep -q zfs /etc/fstab; then
         sed -i 's#^GRUB_CMDLINE_LINUX=""#GRUB_CMDLINE_LINUX="root=ZFS=zroot/ROOT/archlinux"#' /etc/default/grub
