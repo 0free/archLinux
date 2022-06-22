@@ -713,7 +713,7 @@ set_locale() {
 setup_desktop() {
 
     if grep -q zfs /etc/fstab; then
-        if ! command -v zfs; then
+        if ! grep -q " zfs " /etc/mkinitcpio.conf; then
             install_zfs
         fi
     fi
