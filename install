@@ -200,7 +200,7 @@ packages_list() {
             # browser
             google-chrome
             # package manager
-            octopi pamac-aur-git
+            octopi
             # system restore
             timeshift
             # pdf
@@ -421,7 +421,7 @@ setup_drive() {
     desktops=(gnome kde)
     menu "select a desktop" desktop ${desktops[@]}
 
-    aur_installers=(aura pamac paru yay)
+    aur_installers=(aura paru yay)
     menu "select AUR installer" aur_installer ${aur_installers[@]}
 
     if [[ ! $root_drive ]]; then
@@ -735,9 +735,6 @@ setup_desktop() {
         if [[ $aur_installer == "aura" ]]; then
             install_aura
         fi
-        if [[ $aur_installer == "pamac" ]]; then
-            install_pamac
-        fi
         if [[ $aur_installer == "paru" ]]; then
             install_paru
         fi
@@ -824,22 +821,6 @@ install_aura() {
 
 }
 
-install_pamac() {
-
-    if [[ ! -d /home/$USER/pamac ]]; then
-        mkdir /home/$USER/pamac
-    fi
-    chown -R $USER /home/$USER/pamac
-    chmod -R 770 /home/$USER/pamac
-    cd /home/$USER/pamac
-    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/libpamac/PKGBUILD
-    sudo -u $USER makepkg -sic --needed --noconfirm
-    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/pamac/PKGBUILD
-    sudo -u $USER makepkg -sic --needed --noconfirm
-    rm -r /home/$USER/pamac && cd /root
-
-}
-
 install_paru() {
 
     if [[ ! -d /home/$USER/paru-bin ]]; then
@@ -878,21 +859,13 @@ install_aur_packages() {
         list+=' '
         list+=${AUR_PACKAGE[$i]}
     done
-
     faillock --user $USER --reset
-
     if [[ $aur_installer == "aura" ]]; then
         aura -Auac --devel --noconfirm $list
     fi
-
-    if [[ $aur_installer == "pamac" ]]; then
-        pamac build --no-confirm $list
-    fi
-
     if [[ $aur_installer == "paru" ]]; then
         sudo -u $USER yay -S --needed --noconfirm $list
     fi
-
     if [[ $aur_installer == "yay" ]]; then
         sudo -u $USER yay -S --needed --noconfirm --batchinstall --answerclean None --answerdiff None --nocleanmenu --nodiffmenu --noeditmenu --noupgrademenu --removemake --noredownload --noprovides --norebuild --sudoloop --mflags "--needed --noconfirm" $list
     fi
@@ -905,9 +878,6 @@ clean_packages() {
     pacman -Scc --noconfirm
     if [[ $aur_installer == "aura" ]]; then
         aura -Ac --noconfirm
-    fi
-    if [[ $aur_installer == "pamac" ]]; then
-        pamac clean --no-confirm
     fi
     if [[ $aur_installer == "paru" ]]; then
         sudo -u $USER paru -Sc --noconfirm
@@ -974,13 +944,6 @@ add_commands() {
         echo "alias aur='sudo aura -S --needed --noconfirm'" >> /home/$USER/.bashrc
         echo "alias remove-aur='aura -R --noconfirm'" >> /home/$USER/.bashrc
         echo "alias clean='sudo pacman -Scc --noconfirm && aura -Ac --noconfirm'" >> /home/$USER/.bashrc
-    fi
-
-    if [[ $aur_installer == "pamac" ]]; then
-        echo "alias update='sudo pacman -Syu --needed --noconfirm && sudo pamac update -a --no-confirm && pamac upgrade -a --no-confirm'" >> /home/$USER/.bashrc
-        echo "alias aur='sudo pamac build --no-confirm'" >> /home/$USER/.bashrc
-        echo "alias remove-aur='pamac remove -u --no-confirm'" >> /home/$USER/.bashrc
-        echo "alias clean='sudo pacman clean --no-confirm'" >> /home/$USER/.bashrc
     fi
 
     if [[ $aur_installer == "paru" ]]; then
