@@ -7,7 +7,7 @@ arch=('x86_64')
 url="https://gitlab.manjaro.org/applications/libpamac"
 license=('GPL3')
 provides=('libpamac')
-depends=('pacman>=6.0' 'pacman<6.1' 'appstream-glib' 'polkit' 'archlinux-appstream-data-pamac')
+depends=('pacman>=6.0' 'pacman<6.1' 'appstream-glib' 'polkit')
 makedepends=('gettext' 'itstool' 'vala' 'meson' 'ninja' 'gobject-introspection' 'xorgproto' 'asciidoc')
 options=(!emptydirs)
 conflicts=('libpamac-aur' 'libpamac-full')
