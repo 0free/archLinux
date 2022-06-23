@@ -244,7 +244,7 @@ packages_list() {
             # code
             flutter swift-bin codelite-bin phpstorm webstorm webstorm-eap lighttable-bin
             # python
-            anaconda python-plotly
+            python-plotly
             # web
             parcel-bundler
             # javascript/css
@@ -267,8 +267,6 @@ packages_list() {
             octoprint
             # USB
             imagewriter etcher-bin woeusb
-            # VM
-            vmware-workstation vmware-unlocker
             # math
             plots scilab-bin wxmaxima genius mathjax
             # edu
@@ -283,8 +281,6 @@ packages_list() {
             jstock
             # playstation & nintendo
             rpcs3-bin yuzu-mainline-bin
-            # control
-            dots-stable
             # remote
             anydesk-bin rustdesk-bin
             # gaming
