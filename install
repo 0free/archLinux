@@ -1005,11 +1005,13 @@ install_zfs() {
     chmod -R 770 /home/$USER/zfs
     cd /home/$USER/zfs
     curl -LO https://raw.githubusercontent.com/0free/archlinux/1/zfs/PKGBUILD
+    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/zfs/zfs.initcpio.install
+    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/zfs/zfs.initcpio.hook
     sudo -u $USER makepkg -sic --needed --noconfirm
     rm -r /home/$USER/zfs && cd /root
 
     MODULES+=' zfs'
-    sed -i 's/block filesystems keyboard fsck/block lvm2 keyboard zfs filesystems/' /etc/mkinitcpio.conf
+    sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
 
 }
 
