@@ -87,6 +87,8 @@ packages_list() {
                 geary
                 # sound
                 lollypop soundconverter blanket
+                # usb
+                gnome-multi-writer-git
             )
             AUR_PACKAGE+=(
                 # gnome extra
@@ -192,6 +194,10 @@ packages_list() {
             xdebug
             # glfw
             glfw-wayland
+            # android
+            android-udev android-tools android-file-transfer gvfs-mtp scrcpy
+            # iPhone/iPod
+            ifuse
         )
 
         AUR_PACKAGE=(
@@ -266,7 +272,9 @@ packages_list() {
             # 3d printer
             octoprint
             # USB
-            imagewriter etcher-bin woeusb
+            windows2usb ventoy-bin usbimager-bin imagewriter etcher-bin woeusb 
+            # USB driver
+            asekey
             # math
             plots scilab-bin wxmaxima genius mathjax
             # edu
@@ -944,7 +952,7 @@ add_commands() {
     fi
 
     if [[ $aur_installer == "paru" ]]; then
-        echo "alias update='sudo pacman -Syu --needed --noconfirm && paru -Sua'" >> /home/$USER/.bashrc
+        echo "alias update='sudo pacman -Syu --needed --noconfirm && paru -Sua --needed --noconfirm'" >> /home/$USER/.bashrc
         echo "alias aur='paru -S --needed --noconfirm'" >> /home/$USER/.bashrc
         echo "alias remove-aur='paru -R --noconfirm'" >> /home/$USER/.bashrc
         echo "alias clean='sudo pacman -Scc --noconfirm && paru -Sc --noconfirm'" >> /home/$USER/.bashrc
