@@ -856,7 +856,7 @@ install_aur_packages() {
     done
     faillock --user $USER --reset
     if [[ $aur_installer == "aura" ]]; then
-        sudo aura -Auc --builduser --devel --noconfirm $list
+        sudo aura -A --builduser --devel --noconfirm $list
     fi
     if [[ $aur_installer == "paru" ]]; then
         sudo -u $USER paru -S --needed --noconfirm $list
