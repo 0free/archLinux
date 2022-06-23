@@ -198,6 +198,8 @@ packages_list() {
             android-udev android-tools android-file-transfer gvfs-mtp scrcpy
             # iPhone/iPod
             ifuse
+            # USB
+            windows2usb ventoy-bin usbimager-bin imagewriter etcher-bin 
         )
 
         AUR_PACKAGE=(
@@ -271,8 +273,6 @@ packages_list() {
             google-earth-pro
             # 3d printer
             octoprint
-            # USB
-            windows2usb ventoy-bin usbimager-bin imagewriter etcher-bin woeusb 
             # USB driver
             asekey
             # math
