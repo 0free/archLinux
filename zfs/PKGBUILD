@@ -1,19 +1,25 @@
 
-pkgname=zfs-dkms
-pkgver=2.1.99.r1268.gdeb1213098
+pkgname=zfs
+pkgver=2.1.5
 pkgrel=1
 pkgdesc="Kernel modules for the Zettabyte File System"
-arch=('any')
+arch=('x86_64')
 url="https://zfsonlinux.org/"
 license=('CDDL')
 conflicts=('spl-dkms')
 provides=("ZFS-MODULE=${pkgver}" "SPL-MODULE=${pkgver}" 'spl-dkms')
 provides+=('zfs')
 replaces=('spl-dkms')
+depends=('dkms')
+optdepends=('python: for arcstat/arc_summary/dbufstat')
 makedepends=('git')
-source=("git+https://github.com/openzfs/zfs.git")
+source=("git+https://github.com/openzfs/zfs.git"
+        "zfs.initcpio.install"
+        "zfs.initcpio.hook"
+        )
 sha256sums=('SKIP')
 b2sums=('SKIP')
+validpgpkeys=('SKIP')
 
 pkgver() {
 
@@ -25,15 +31,17 @@ pkgver() {
 
 prepare() {
 
-    cd "${srcdir}"/${pkgname%-dkms} #-${pkgver}
+    cd $srcdir/$pkgname
 
     sed -ri "/AC_CONFIG_FILES/,/]\)/{
 /AC_CONFIG_FILES/n
 /]\)/n
-/^\s*(module\/.*|${pkgname%-dkms}.release|Makefile)/!d
+/^\s*(module\/.*|$pkgname.release|Makefile)/!d
 }" configure.ac
 
     sed -i "s/AM_GNU_GETTEXT/AM_GNU_GETTEXT_VERSION/g" configure.ac
+
+    ln -sf /bin/true python3-fake
 
     autoreconf -fi
 
@@ -41,28 +49,50 @@ prepare() {
 
 build() {
 
-    cd "${srcdir}"/${pkgname%-dkms} #-${pkgver}
+    cd $srcdir/$pkgname
     
-    ./scripts/dkms.mkconf -n ${pkgname%-dkms} -v ${pkgver} -f dkms.conf
-
+    ./scripts/dkms.mkconf -n $pkgname -v $pkgver -f dkms.conf
     ./scripts/make_gitrev.sh include/zfs_gitrev.h
+
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --sbindir=/usr/bin \
+                --with-mounthelperdir=/usr/bin \
+                --with-udevdir=/usr/lib/udev \
+                --libexecdir=/usr/lib/zfs \
+                --with-python="$PWD/python3-fake" \
+                --enable-pyzfs=no \
+                --enable-systemd \
+                --with-config=user
+    make
 
 }
 
 package() {
 
-    depends=('dkms')
+    cd $srcdir/$pkgname
 
-    cd "${srcdir}"/${pkgname%-dkms} #-${pkgver}
+    dkmsdir="$pkgdir/usr/src/$pkgname-$pkgver"
 
-    dkmsdir="${pkgdir}/usr/src/${pkgname%-dkms}-${pkgver}"
+    install -d $dkmsdir/{config,scripts}
 
-    install -d "${dkmsdir}"/{config,scripts}
+    cp -a configure dkms.conf Makefile.in META $pkgname_config.h.in $pkgname.release.in include/ module/ $dkmsdir/
 
-    cp -a configure dkms.conf Makefile.in META ${pkgname%-dkms}_config.h.in ${pkgname%-dkms}.release.in include/ module/ "${dkmsdir}"/
+    cp config/compile config/config.* config/missing config/*sh $dkmsdir/config/
 
-    cp config/compile config/config.* config/missing config/*sh "${dkmsdir}"/config/
+    cp scripts/enum-extract.pl scripts/dkms.postbuild $dkmsdir/scripts/
 
-    cp scripts/enum-extract.pl scripts/dkms.postbuild "${dkmsdir}"/scripts/
+    make DESTDIR=$pkgdir install
+    install -D -m644 contrib/bash_completion.d/$pkgname $pkgdir/usr/share/bash-completion/completions/$pkgname
+
+    rm -r $pkgdir/etc/init.d
+    rm -r $pkgdir/etc/sudoers.d
+    #rm -r $pkgdir/usr/lib/dracut
+    rm -r $pkgdir/usr/lib/modules-load.d
+    rm -r $pkgdir/usr/share/initramfs-tools
+    rm -r $pkgdir/usr/share/$pkgname
+
+    install -D -m644 $srcdir/$pkgname.initcpio.hook $pkgdir/usr/lib/initcpio/hooks/$pkgname
+    install -D -m644 $srcdir/$pkgname.initcpio.install $pkgdir/usr/lib/initcpio/install/$pkgname
 
 }
