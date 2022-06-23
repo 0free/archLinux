@@ -234,9 +234,7 @@ packages_list() {
             # music player
             nuclear-player-bin amberol
             # video edit
-            lightworks video-trimmer
-            # audio edit
-            stargate 
+            davinci-resolve lightworks video-trimmer
             # youtube
             freetube-bin youtube-music-bin
             # download
