@@ -216,7 +216,7 @@ packages_list() {
             intltool
         )
 
-        AUR_PACKAGE=(
+        AUR_PACKAGE+=(
             # icons
             colloid-icon-theme-git
             # browser
@@ -289,7 +289,6 @@ packages_list() {
             portfolio-performance-bin
             # diagram
             drawio-desktop-bin
-            # flightgear
             # stock
             jstock
             # nintendo
@@ -335,7 +334,7 @@ packages_list() {
             postfix postfix-mysql postfix-pcre postfixadmin dovecot dovecot-mysql opendkim cyrus-sasl
         )
 
-        AUR_PACKAGE=(
+        AUR_PACKAGE+=(
             # browser
             google-chrome
             # server
@@ -347,7 +346,7 @@ packages_list() {
     fi
 
     if [[ $computer == "miner" ]]; then
-        AUR_PACKAGE=(
+        AUR_PACKAGE+=(
             # browser
             google-chrome
             # miner
