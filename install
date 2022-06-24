@@ -858,6 +858,27 @@ install_aur_packages() {
 
 }
 
+install_zfs() {
+
+    echo ">>> installing zfs-linux"
+
+    if [[ ! -d /home/$USER/zfs ]]; then
+        mkdir /home/$USER/zfs
+    fi
+    chown -R $USER /home/$USER/zfs
+    chmod -R 770 /home/$USER/zfs
+    cd /home/$USER/zfs
+    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/zfs/PKGBUILD
+    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/zfs/zfs.initcpio.install
+    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/zfs/zfs.initcpio.hook
+    sudo -u $USER makepkg -sic --needed --noconfirm --skipinteg --skippgpcheck
+    rm -r /home/$USER/zfs && cd /root
+
+    MODULES+=' zfs'
+    sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
+
+}
+
 clean_packages() {
 
     echo ">>> cleaning packages"
@@ -989,27 +1010,6 @@ set_initcpio() {
     mkinitcpio -p linux-lts
 
     finish
-
-}
-
-install_zfs() {
-
-    echo ">>> installing zfs-linux"
-
-    if [[ ! -d /home/$USER/zfs ]]; then
-        mkdir /home/$USER/zfs
-    fi
-    chown -R $USER /home/$USER/zfs
-    chmod -R 770 /home/$USER/zfs
-    cd /home/$USER/zfs
-    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/zfs/PKGBUILD
-    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/zfs/zfs.initcpio.install
-    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/zfs/zfs.initcpio.hook
-    sudo -u $USER makepkg -sic --needed --noconfirm
-    rm -r /home/$USER/zfs && cd /root
-
-    MODULES+=' zfs'
-    sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
 
 }
 
