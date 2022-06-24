@@ -267,8 +267,6 @@ packages_list() {
             figma-linux-bin
             # 3d
             f3d blockbench-bin
-            # simulation
-            openfoam-com-git
             # map
             google-earth-pro
             # 3d printer
