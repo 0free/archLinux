@@ -218,7 +218,7 @@ packages_list() {
             # meetings
             teams zoom
             # drives
-            insync odrive dropbox megasync-bin
+            insync dropbox megasync-bin
             # social
             whatsapp-for-linux whatsie-git walc
             # wireless drivers
