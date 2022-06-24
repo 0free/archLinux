@@ -812,7 +812,9 @@ install_makepkg() {
 
     AURs=($(cat /root/aurs))
     for aur in ${AURs[@]}; do
-        rm -r /home/$USER/$aur
+        if [[ -d /home/$USER/$aur ]]; then
+            rm -r /home/$USER/$aur
+        fi
     done
 
 }
