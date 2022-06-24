@@ -43,7 +43,7 @@ packages_list() {
         archlinux-keyring
     )
 
-    if [[ $filesystem == "zfs" ]]; then
+    if grep -q zfs /etc/fstab; then
         AUR_PACKAGE+=(
             zfs-utils zfs-dmks
         )
