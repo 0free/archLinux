@@ -238,7 +238,7 @@ packages_list() {
             # music player
             nuclear-player-bin amberol
             # video edit
-            davinci-resolve video-trimmer #lightworks
+            davinci-resolve video-trimmer lightworks
             # youtube
             freetube-bin youtube-music-bin
             # download
@@ -250,7 +250,7 @@ packages_list() {
             # android
             android-studio android-sdk android-sdk-platform-tools
             # code
-            flutter swift-bin codelite-bin phpstorm webstorm webstorm-eap lighttable-bin
+            flutter swift-bin codelite-bin phpstorm webstorm webstorm-eap #lighttable-bin
             # python
             python-plotly python-openai
             # web
