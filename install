@@ -208,7 +208,7 @@ packages_list() {
             # browser
             google-chrome
             # package manager
-            octopi
+            
             # system restore
             timeshift
             # pdf
@@ -729,22 +729,21 @@ setup_desktop() {
     packages_list
     install_packages
 
-    echo ">>> installing $aur_installer"
-    if [[ $aur_installer == "aura" ]]; then
-        aur_installer='aura-bin'
-    elif [[ $aur_installer == "paru" ]]; then
-        aur_installer='paru-bin'
-    elif [[ $aur_installer == "pikaur" ]]; then
-        aur_installer='pikaur'
-    elif [[ $aur_installer == "yay" ]]; then
-        aur_installer='yay-bin'
-    fi
-
     faillock --user $USER --reset
 
     if [[ $aur_installer == "makepkg" ]]; then
         install_makepkg
     elif ! command -v $aur_installer; then
+        echo ">>> installing $aur_installer"
+        if [[ $aur_installer == "aura" ]]; then
+            aur_installer='aura-bin'
+        elif [[ $aur_installer == "paru" ]]; then
+            aur_installer='paru-bin'
+        elif [[ $aur_installer == "pikaur" ]]; then
+            aur_installer='pikaur'
+        elif [[ $aur_installer == "yay" ]]; then
+            aur_installer='yay-bin'
+        fi
         install_aur
     fi
 
@@ -802,8 +801,8 @@ install_makepkg() {
 
     i=0
     for aur in ${AUR_PACKAGE[@]}; do
+        echo ">>> installing $aur ($((i+1))/${#AUR_PACKAGE[@]})"
         if [[ ! -d /home/$USER/$aur ]]; then
-            echo ">>> cloning $aur ($((i+1))/${#AUR_PACKAGE[@]})"
             cd /home/$USER/
             git clone https://aur.archlinux.org/$aur.git
         fi
