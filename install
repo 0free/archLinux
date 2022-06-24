@@ -218,7 +218,7 @@ packages_list() {
             # meetings
             teams zoom
             # drives
-            insync onedrivegui-git odrive dropbox megasync-bin
+            insync odrive dropbox megasync-bin
             # social
             whatsapp-for-linux whatsie-git walc
             # wireless drivers
@@ -425,7 +425,7 @@ setup_drive() {
     desktops=(gnome kde)
     menu "select a desktop" desktop ${desktops[@]}
 
-    aur_installers=(aura makepkg paru pikaur yay)
+    aur_installers=(makepkg aura paru pikaur yay)
     menu "select AUR installer" aur_installer ${aur_installers[@]}
 
     if [[ ! $root_drive ]]; then
@@ -927,6 +927,14 @@ add_commands() {
     echo "alias restart='sudo systemctl restart'" >> /home/$USER/.bashrc
     echo "alias status='sudo systemctl status'" >> /home/$USER/.bashrc
 
+
+    if [[ $aur_installer == "makepkg" ]]; then
+        echo "alias update='sudo pacman -Syu --needed --noconfirm && makepkg --needed --noconfirm'" >> /home/$USER/.bashrc
+        echo "alias aur='makepkg -sic --needed --noconfirm'" >> /home/$USER/.bashrc
+        echo "alias remove-aur='aura -R --noconfirm'" >> /home/$USER/.bashrc
+        echo "alias clean='sudo pacman -Scc --noconfirm && aura -Ac --noconfirm'" >> /home/$USER/.bashrc
+    fi
+
     if [[ $aur_installer == "aura" ]]; then
         echo "alias update='sudo pacman -Syu --needed --noconfirm && sudo aura -Auac --devel --noconfirm'" >> /home/$USER/.bashrc
         echo "alias aur='sudo aura -Auc --needed --noconfirm'" >> /home/$USER/.bashrc
@@ -964,6 +972,8 @@ add_commands() {
 
     if [[ $computer == "miner" ]]; then
         echo "alias trex='t-rex -c ~/config.json'" >> /home/$USER/.bashrc
+        echo -e "#!/bin/bash\n\nt-rex -c ~/config.json" > /etc/init.d/startup.sh
+        chmod +x /etc/init.d/startup.sh
     fi
 
 }
