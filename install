@@ -161,7 +161,7 @@ packages_list() {
             # trackpad
             xf86-input-synaptics
             # math
-            geogebra sagemath
+            geogebra sagemath mathjax
             # wine
             wine-staging vkd3d faudio
             # finance
@@ -272,7 +272,7 @@ packages_list() {
             # USB driver
             asekey
             # math
-            wxmaxima mathjax
+            wxmaxima
             # edu
             openboard lean4-bin
             # finance
