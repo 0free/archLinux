@@ -419,7 +419,7 @@ setup_drive() {
     desktops=(gnome kde)
     menu "select a desktop" desktop ${desktops[@]}
 
-    aur_installers=(aura paru pikaur yay)
+    aur_installers=(aura makepkg paru pikaur yay)
     menu "select AUR installer" aur_installer ${aur_installers[@]}
 
     if [[ ! $root_drive ]]; then
@@ -724,6 +724,9 @@ setup_desktop() {
     if ! command -v $aur_installer; then
         echo ">>> installing $aur_installer"
         faillock --user $USER --reset
+        if [[ $aur_installer == "makepkg" ]]; then
+            install_makepkg
+        fi
         if [[ $aur_installer == "aura" ]]; then
             install_aura
         fi
@@ -785,6 +788,24 @@ install_packages() {
     # install all packages
     echo ">>> installing packages"
     pacman -S --needed --noconfirm $list
+
+}
+
+install_makepkg() {
+
+    $total=${#AUR_PACKAGE[@]}
+    for aur in $AUR_PACKAGE; do
+        if [[ ! -d /home/$USER/$aur ]]; then
+            echo ">>> cloning $aur (${AUR_PACKAGE[$aur]}/$total)"
+            cd /home/$USER/
+            git clone https://aur.archlinux.org/$aur.git
+        fi
+        chown -R $USER /home/$USER/$aur
+        chmod -R 770 /home/$USER/$aur
+        cd /home/$USER/$aur
+        sudo -u $USER makepkg -sic --needed --noconfirm
+        rm -r /home/$USER/$aur && cd /root
+    done
 
 }
 
