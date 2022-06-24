@@ -173,7 +173,9 @@ packages_list() {
             # 3d printer
             cura
             # code
-            code stylelint typescript
+            code stylelint
+            # TypeScript
+            typescript assemblyscript
             # mauikit
             mauikit mauikit-accounts mauikit-filebrowsing mauikit-imagetools mauikit-texteditor
             # bitcoin
@@ -218,7 +220,7 @@ packages_list() {
             # drives
             insync onedrivegui-git odrive dropbox megasync-bin
             # social
-            whatsapp-for-linux whatsie-git
+            whatsapp-for-linux whatsie-git walc
             # wireless drivers
             rtl8814au-aircrack-dkms-git
             # Corsair
@@ -248,11 +250,13 @@ packages_list() {
             # code
             flutter swift-bin codelite-bin phpstorm webstorm webstorm-eap lighttable-bin
             # python
-            python-plotly
+            python-plotly python-openai
             # web
             parcel-bundler
+            # JavaScript
+            flow-bin runjs-bin
             # javascript/css
-            esbuild-bin runjs-bin
+            esbuild-bin
             # database
             dbgate-bin
             # system
@@ -385,7 +389,7 @@ menu() {
 
 setup_drive() {
 
-    echo -e "\t\t\tcreated by Saif AlSubhi"
+    echo "# created by Saif AlSubhi"
     echo "-------------------------------------------------------------------------------------------------"
     lsblk -o name,size,mountpoint,fstype,label,model
     echo "-------------------------------------------------------------------------------------------------"
@@ -721,20 +725,23 @@ setup_desktop() {
     packages_list
     install_packages
 
-    if ! command -v $aur_installer; then
-        echo ">>> installing $aur_installer"
-        faillock --user $USER --reset
-        if [[ $aur_installer == "makepkg" ]]; then
-            install_makepkg
-        elif [[ $aur_installer == "aura" ]]; then
-            install_aura
-        elif [[ $aur_installer == "paru" ]]; then
-            install_paru
-        elif [[ $aur_installer == "pikaur" ]]; then
-            install_pikaur
-        elif [[ $aur_installer == "yay" ]]; then
-            install_yay
-        fi
+    echo ">>> installing $aur_installer"
+    if [[ $aur_installer == "aura" ]]; then
+        aur_installer='aura-bin'
+    elif [[ $aur_installer == "paru" ]]; then
+        aur_installer='paru-bin'
+    elif [[ $aur_installer == "pikaur" ]]; then
+        aur_installer='pikaur'
+    elif [[ $aur_installer == "yay" ]]; then
+        aur_installer='yay-bin'
+    fi
+
+    faillock --user $USER --reset
+
+    if [[ $aur_installer == "makepkg" ]]; then
+        install_makepkg
+    elif ! command -v $aur_installer; then
+        install_aur
     fi
 
     install_aur_packages
@@ -804,63 +811,18 @@ install_makepkg() {
 
 }
 
-install_aura() {
+install_aur() {
 
-    if [[ ! -d /home/$USER/aura-bin ]]; then
-        echo ">>> cloning aura-bin"
+    if [[ ! -d /home/$USER/$aur_installer ]]; then
+        echo ">>> cloning $aur_installer"
         cd /home/$USER/
-        git clone https://aur.archlinux.org/aura-bin.git
+        git clone https://aur.archlinux.org/$aur_installer.git
     fi
-    chown -R $USER /home/$USER/aura-bin
-    chmod -R 770 /home/$USER/aura-bin
-    cd /home/$USER/aura-bin
+    chown -R $USER /home/$USER/$aur_installer
+    chmod -R 770 /home/$USER/$aur_installer
+    cd /home/$USER/$aur_installer
     sudo -u $USER makepkg -sic --needed --noconfirm
-    rm -r /home/$USER/aura-bin && cd /root
-
-}
-
-install_paru() {
-
-    if [[ ! -d /home/$USER/paru-bin ]]; then
-        echo ">>> cloning paru-bin"
-        cd /home/$USER/
-        git clone https://aur.archlinux.org/paru-bin.git
-    fi
-    chown -R $USER /home/$USER/paru-bin
-    chmod -R 770 /home/$USER/paru-bin
-    cd /home/$USER/paru-bin
-    sudo -u $USER makepkg -sic --needed --noconfirm
-    rm -r /home/$USER/paru-bin && cd /root
-
-}
-
-install_pikaur() {
-
-    if [[ ! -d /home/$USER/pikaur ]]; then
-        echo ">>> cloning pikaur"
-        cd /home/$USER/
-        git clone https://aur.archlinux.org/pikaur.git
-    fi
-    chown -R $USER /home/$USER/pikaur
-    chmod -R 770 /home/$USER/pikaur
-    cd /home/$USER/pikaur
-    sudo -u $USER makepkg -sic --needed --noconfirm
-    rm -r /home/$USER/pikaur && cd /root
-
-}
-
-install_yay() {
-
-    if [[ ! -d /home/$USER/yay-bin ]]; then
-        echo ">>> cloning yay-bin"
-        cd /home/$USER/
-        git clone https://aur.archlinux.org/yay-bin.git
-    fi
-    chown -R $USER /home/$USER/yay-bin
-    chmod -R 770 /home/$USER/yay-bin
-    cd /home/$USER/yay-bin
-    sudo -u $USER makepkg -sic --needed --noconfirm
-    rm -r /home/$USER/yay-bin && cd /root
+    rm -r /home/$USER/$aur_installer && cd /root
 
 }
 
