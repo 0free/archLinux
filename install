@@ -43,6 +43,12 @@ packages_list() {
         archlinux-keyring
     )
 
+    if [[ $filesystem == "zfs" ]]; then
+        AUR_PACKAGE+=(
+            zfs-utils zfs-dmks
+        )
+    fi
+
     if [[ $desktop == "gnome" ]]; then
 
         PACKAGES+=(
@@ -741,12 +747,6 @@ setup_desktop() {
         install_aur_packages
     fi
 
-    if grep -q zfs /etc/fstab; then
-        if ! grep -q " zfs " /etc/mkinitcpio.conf; then
-            install_zfs
-        fi
-    fi
-
     clean_packages
     enable_services
     add_commands
@@ -855,27 +855,6 @@ install_aur_packages() {
     if [[ $aur_installer == "yay" ]]; then
         sudo -u $USER yay -S --needed --noconfirm --batchinstall --answerclean None --answerdiff None --nocleanmenu --nodiffmenu --noeditmenu --noupgrademenu --removemake --noredownload --noprovides --norebuild --sudoloop --mflags "--needed --noconfirm" $list
     fi
-
-}
-
-install_zfs() {
-
-    echo ">>> installing zfs-linux"
-
-    if [[ ! -d /home/$USER/zfs ]]; then
-        mkdir /home/$USER/zfs
-    fi
-    chown -R $USER /home/$USER/zfs
-    chmod -R 770 /home/$USER/zfs
-    cd /home/$USER/zfs
-    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/zfs/PKGBUILD
-    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/zfs/zfs.initcpio.install
-    curl -LO https://raw.githubusercontent.com/0free/archlinux/1/zfs/zfs.initcpio.hook
-    sudo -u $USER makepkg -sic --needed --noconfirm --skipinteg --skippgpcheck
-    rm -r /home/$USER/zfs && cd /root
-
-    MODULES+=' zfs'
-    sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
 
 }
 
@@ -1000,6 +979,13 @@ set_initcpio() {
 
     if grep -q btrfs /etc/fstab; then
         MODULES+=' btrfs'
+    fi
+
+    if grep -q zfs /etc/fstab; then
+        if ! grep -q " zfs " /etc/mkinitcpio.conf; then
+            MODULES+=' zfs'
+            sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
+        fi
     fi
 
     sed -i "s|^MODULES=()|MODULES=($MODULES)|" /etc/mkinitcpio.conf
