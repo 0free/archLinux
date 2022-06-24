@@ -10,7 +10,7 @@ MODULES=''
 
 packages_list() {
 
-    PACKAGES=(
+    PACKAGES+=(
         # linux
         linux linux-headers linux-firmware linux-lts linux-lts-headers
         # micro-codes
