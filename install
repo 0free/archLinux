@@ -249,8 +249,6 @@ packages_list() {
             android-studio android-sdk android-sdk-platform-tools
             # code
             flutter swift-bin codelite-bin phpstorm webstorm webstorm-eap #lighttable-bin
-            # python
-            python-openai
             # web
             parcel-bundler
             # JavaScript
