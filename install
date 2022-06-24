@@ -862,17 +862,14 @@ clean_packages() {
 
     echo ">>> cleaning packages"
     pacman -Scc --noconfirm
-    sudo -u $USER makepkg -rc
+    sudo -u $USER makepkg -rc --noconfirm
     if [[ $aur_installer == "aura" ]]; then
         sudo aura -Auac --builduser --noconfirm
-    fi
-    if [[ $aur_installer == "paru" ]]; then
+    elif [[ $aur_installer == "paru" ]]; then
         sudo -u $USER paru -Sc --noconfirm
-    fi
-    if [[ $aur_installer == "pikaur" ]]; then
+    elif [[ $aur_installer == "pikaur" ]]; then
         sudo -u $USER pikaur -Scc --noconfirm
-    fi
-    if [[ $aur_installer == "yay" ]]; then
+    elif [[ $aur_installer == "yay" ]]; then
         sudo -u $USER yay -Yc && sudo -u $USER yay -Scc
     fi
 
