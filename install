@@ -175,7 +175,7 @@ packages_list() {
             # code
             code stylelint
             # TypeScript
-            typescript assemblyscript
+            typescript
             # mauikit
             mauikit mauikit-accounts mauikit-filebrowsing mauikit-imagetools mauikit-texteditor
             # bitcoin
@@ -255,6 +255,8 @@ packages_list() {
             parcel-bundler
             # JavaScript
             flow-bin runjs-bin
+            # TypeScript
+            assemblyscript
             # javascript/css
             esbuild-bin
             # database
@@ -796,6 +798,7 @@ install_packages() {
 
 install_makepkg() {
 
+    i=0
     for aur in ${AUR_PACKAGE[@]}; do
         if [[ ! -d /home/$USER/$aur ]]; then
             echo ">>> cloning $aur ($((i+1))/${#AUR_PACKAGE[@]})"
