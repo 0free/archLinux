@@ -266,7 +266,7 @@ packages_list() {
             # drawing
             figma-linux-bin
             # 3d
-            f3d maya-arnold blockbench-bin
+            f3d blockbench-bin
             # simulation
             openfoam-com-git
             # map
