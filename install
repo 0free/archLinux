@@ -266,7 +266,7 @@ packages_list() {
             # photos
             metadata-cleaner lunacy-bin annotator fastflix
             # drawing
-            figma-linux-bin ipe
+            figma-linux-bin
             # 3d
             f3d maya maya-arnold blockbench-bin
             # simulation
