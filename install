@@ -803,7 +803,7 @@ install_makepkg() {
     for aur in ${AUR_PACKAGE[@]}; do
         i=$((i+1))
         echo ">>> installing $aur ($i/${#AUR_PACKAGE[@]})"
-        if ! grep $aur /root/aurs; then
+        if ! grep -q $aur /root/aurs; then
             if [[ ! -d /home/$USER/$aur ]]; then
                 cd /home/$USER/
                 git clone https://aur.archlinux.org/$aur.git
