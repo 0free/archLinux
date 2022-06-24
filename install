@@ -741,16 +741,16 @@ setup_desktop() {
         install_aur_packages
     fi
 
-    clean_packages
-    enable_services
-    add_commands
-    set_initcpio
-
     if grep -q zfs /etc/fstab; then
         if ! grep -q " zfs " /etc/mkinitcpio.conf; then
             install_zfs
         fi
     fi
+
+    clean_packages
+    enable_services
+    add_commands
+    set_initcpio
 
 }
 
