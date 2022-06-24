@@ -801,7 +801,8 @@ install_makepkg() {
 
     i=0
     for aur in ${AUR_PACKAGE[@]}; do
-        echo ">>> installing $aur ($((i+1))/${#AUR_PACKAGE[@]})"
+        i=$((i+1))
+        echo ">>> installing $aur ($i/${#AUR_PACKAGE[@]})"
         if ! grep $aur /root/aurs; then
             if [[ ! -d /home/$USER/$aur ]]; then
                 cd /home/$USER/
