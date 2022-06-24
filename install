@@ -250,7 +250,7 @@ packages_list() {
             # code
             flutter swift-bin codelite-bin phpstorm webstorm webstorm-eap #lighttable-bin
             # python
-            python-plotly python-openai
+            python-openai
             # web
             parcel-bundler
             # JavaScript
