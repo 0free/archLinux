@@ -862,6 +862,7 @@ clean_packages() {
 
     echo ">>> cleaning packages"
     pacman -Scc --noconfirm
+    sudo -u $USER makepkg -rc
     if [[ $aur_installer == "aura" ]]; then
         sudo aura -Auac --builduser --noconfirm
     fi
@@ -930,10 +931,9 @@ add_commands() {
 
 
     if [[ $aur_installer == "makepkg" ]]; then
-        echo "alias update='sudo pacman -Syu --needed --noconfirm && makepkg --needed --noconfirm'" >> /home/$USER/.bashrc
+        echo "alias update='sudo pacman -Syu --needed --noconfirm'" >> /home/$USER/.bashrc
         echo "alias aur='makepkg -sic --needed --noconfirm'" >> /home/$USER/.bashrc
-        echo "alias remove-aur='aura -R --noconfirm'" >> /home/$USER/.bashrc
-        echo "alias clean='sudo pacman -Scc --noconfirm && aura -Ac --noconfirm'" >> /home/$USER/.bashrc
+        echo "alias clean='sudo pacman -Scc --noconfirm && makepkg -rc --noconfirm'" >> /home/$USER/.bashrc
     fi
 
     if [[ $aur_installer == "aura" ]]; then
