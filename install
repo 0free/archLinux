@@ -264,7 +264,9 @@ packages_list() {
             # system
             system-monitoring-center whatpulse
             # photos
-            metadata-cleaner lunacy-bin annotator photoprism fastflix
+            metadata-cleaner lunacy-bin annotator fastflix
+            # photoprism
+            tensorflow115 photoprism
             # drawing
             figma-linux-bin ipe
             # 3d
