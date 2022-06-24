@@ -392,9 +392,9 @@ menu() {
 setup_drive() {
 
     echo "# created by Saif AlSubhi"
-    echo "-------------------------------------------------------------------------------------------------"
+    echo "----------------------------------------------------------------------------------------------"
     lsblk -o name,size,mountpoint,fstype,label,model
-    echo "-------------------------------------------------------------------------------------------------"
+    echo "----------------------------------------------------------------------------------------------"
 
     location="/dev/disk/by-id/"
 
@@ -416,7 +416,7 @@ setup_drive() {
 
     drive=$location"$drive"
 
-    filesystems=(btrfs xfs zfs)
+    filesystems=(btrfs ext4 xfs zfs)
     menu "select a filesystem" filesystem ${filesystems[@]}
 
     computers=(minimal miner server workstation)
@@ -452,6 +452,8 @@ setup_drive() {
         create_zfs
     elif [[ $filesystem == "btrfs" ]]; then
         mkfs.btrfs -f -L ROOT $root_drive
+    elif [[ $filesystem == "ext4" ]]; then
+        mkfs.ext4 -f -L ROOT $root_drive
     elif [[ $filesystem == "xfs" ]]; then
         mkfs.xfs -f -L ROOT $root_drive
     fi
