@@ -810,7 +810,7 @@ install_makepkg() {
         fi
     done
 
-    AURs=($(cat /root/aurs))
+    AURs=($(ls /home/$USER/))
     for aur in ${AURs[@]}; do
         if [[ -d /home/$USER/$aur ]]; then
             rm -r /home/$USER/$aur
@@ -862,7 +862,6 @@ clean_packages() {
 
     echo ">>> cleaning packages"
     pacman -Scc --noconfirm
-    sudo -u $USER makepkg -c --noconfirm
     if [[ $aur_installer == "aura" ]]; then
         sudo aura -Auac --builduser --noconfirm
     elif [[ $aur_installer == "paru" ]]; then
@@ -872,7 +871,6 @@ clean_packages() {
     elif [[ $aur_installer == "yay" ]]; then
         sudo -u $USER yay -Yc && sudo -u $USER yay -Scc
     fi
-
 
 }
 
