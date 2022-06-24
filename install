@@ -234,7 +234,7 @@ packages_list() {
             # plan
             xmind
             # media player
-            clapper xplayer
+            clapper
             # music player
             nuclear-player-bin amberol
             # video edit
