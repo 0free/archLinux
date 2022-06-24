@@ -6,8 +6,6 @@ timezone='Asia/Muscat'
 language=(ar_OM en_US)
 keymaps=(us)
 
-MODULES=''
-
 packages_list() {
 
     PACKAGES+=(
@@ -46,6 +44,12 @@ packages_list() {
     if grep -q zfs /etc/fstab; then
         AUR_PACKAGE+=(
             zfs-utils zfs-dmks
+        )
+    fi
+
+    if grep -q btrfs /etc/fstab; then
+        AUR_PACKAGE+=(
+            btrfs-assistant
         )
     fi
 
@@ -313,12 +317,6 @@ packages_list() {
             # wine
             winegui-bin dxvk-bin
         )
-
-        if grep -q btrfs /etc/fstab; then
-            AUR_PACKAGE+=(
-                btrfs-assistant
-            )
-        fi
 
     fi
 
