@@ -177,7 +177,7 @@ packages_list() {
             # TypeScript
             typescript
             # tensorflow
-            tensorflow
+            tensorflow tensorboard
             # mauikit
             mauikit mauikit-accounts mauikit-filebrowsing mauikit-imagetools mauikit-texteditor
             # bitcoin
@@ -255,8 +255,6 @@ packages_list() {
             parcel-bundler
             # JavaScript
             flow-bin runjs-bin
-            # TypeScript
-            #assemblyscript
             # javascript/css
             esbuild-bin
             # database
@@ -268,7 +266,7 @@ packages_list() {
             # drawing
             figma-linux-bin
             # 3d
-            f3d maya maya-arnold blockbench-bin
+            f3d maya-arnold blockbench-bin
             # simulation
             openfoam-com-git
             # map
