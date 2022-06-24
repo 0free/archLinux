@@ -199,7 +199,9 @@ packages_list() {
             # android
             android-udev android-tools android-file-transfer gvfs-mtp scrcpy
             # iPhone/iPod
-            ifuse 
+            ifuse
+            # dependencies
+            intltool
         )
 
         AUR_PACKAGE=(
@@ -229,8 +231,10 @@ packages_list() {
             openrgb-git
             # screen
             green-recorder-git wayfarer-git
+            # dependencies
+            pygtk rarian
             # plan
-            planner xmind #morgen-bin
+            planner xmind morgen-bin
             # media player
             clapper xplayer
             # music player
