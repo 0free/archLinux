@@ -272,7 +272,7 @@ packages_list() {
             # USB driver
             asekey
             # math
-            plots scilab-bin wxmaxima genius mathjax
+            scilab-bin wxmaxima genius mathjax
             # edu
             openboard lean4-bin
             # finance
