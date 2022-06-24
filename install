@@ -43,7 +43,7 @@ packages_list() {
 
     if grep -q zfs /etc/fstab; then
         AUR_PACKAGE+=(
-            zfs-utils zfs-dmks
+            zfs-utils zfs-dkms
         )
     fi
 
