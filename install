@@ -230,7 +230,7 @@ packages_list() {
             # screen
             green-recorder-git wayfarer-git
             # plan
-            morgen-bin planner xmind
+            planner xmind #morgen-bin
             # media player
             clapper xplayer
             # music player
