@@ -793,10 +793,9 @@ install_packages() {
 
 install_makepkg() {
 
-    $total=${#AUR_PACKAGE[@]}
-    for aur in $AUR_PACKAGE; do
+    for aur in ${AUR_PACKAGE[@]}; do
         if [[ ! -d /home/$USER/$aur ]]; then
-            echo ">>> cloning $aur (${AUR_PACKAGE[$aur]}/$total)"
+            echo ">>> cloning $aur (${AUR_PACKAGE[$aur]}/${#AUR_PACKAGE[@]})"
             cd /home/$USER/
             git clone https://aur.archlinux.org/$aur.git
         fi
