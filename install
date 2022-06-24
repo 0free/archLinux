@@ -303,7 +303,7 @@ packages_list() {
             # bandwidth
             peer2profit
             # USB
-            windows2usb ventoy-bin usbimager-bin imagewriter etcher-bin
+            ventoy-bin usbimager-bin imagewriter etcher-bin
             # wine
             winegui-bin dxvk-bin
         )
