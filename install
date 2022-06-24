@@ -212,7 +212,7 @@ packages_list() {
             # system restore
             timeshift
             # pdf
-            acroread sioyek pdfstudioviewer
+            acroread pdfstudioviewer
             # office
             onlyoffice-bin freeoffice wps-office openoffice-bin
             # meetings
