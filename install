@@ -811,7 +811,7 @@ install_makepkg() {
             chown -R $USER /home/$USER/$aur
             chmod -R 770 /home/$USER/$aur
             cd /home/$USER/$aur
-            sudo -u $USER makepkg -sic --needed --noconfirm --skippgpcheck
+            sudo -u $USER makepkg -sic --needed --noconfirm --skipinteg --skippgpcheck
             rm -r /home/$USER/$aur && cd /root
             echo $aur >> /root/aurs
         fi
