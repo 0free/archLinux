@@ -210,7 +210,7 @@ packages_list() {
             # browser
             google-chrome
             # package manager
-            
+            pamac-aur
             # system restore
             timeshift
             # pdf
@@ -231,10 +231,8 @@ packages_list() {
             openrgb-git
             # screen
             green-recorder-git wayfarer-git
-            # dependencies
-            pygtk rarian
             # plan
-            planner xmind morgen-bin
+            xmind
             # media player
             clapper xplayer
             # music player
