@@ -279,8 +279,7 @@ packages_list() {
             portfolio-performance-bin
             # diagram
             drawio-desktop-bin
-            # flight simulator
-            flightgear
+            # flightgear
             # stock
             jstock
             # playstation & nintendo
@@ -809,6 +808,11 @@ install_makepkg() {
             rm -r /home/$USER/$aur && cd /root
             echo $aur >> /root/aurs
         fi
+    done
+
+    AURs=($(cat /home/$USER/aurs))
+    for aur in ${AURs[@]}; do
+        rm -r /home/$USER/$aur
     done
 
 }
