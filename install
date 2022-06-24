@@ -285,7 +285,7 @@ packages_list() {
             # nintendo
             yuzu-mainline-bin
             # remote
-            anydesk-bin rustdesk-bin
+            anydesk-bin
             # gaming
             legendary
             # touch
