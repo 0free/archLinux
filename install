@@ -209,8 +209,6 @@ packages_list() {
             colloid-icon-theme-git
             # browser
             google-chrome
-            # package manager
-            pamac-aur
             # system restore
             timeshift
             # pdf
