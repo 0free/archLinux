@@ -726,17 +726,13 @@ setup_desktop() {
         faillock --user $USER --reset
         if [[ $aur_installer == "makepkg" ]]; then
             install_makepkg
-        fi
-        if [[ $aur_installer == "aura" ]]; then
+        elif [[ $aur_installer == "aura" ]]; then
             install_aura
-        fi
-        if [[ $aur_installer == "paru" ]]; then
+        elif [[ $aur_installer == "paru" ]]; then
             install_paru
-        fi
-        if [[ $aur_installer == "pikaur" ]]; then
+        elif [[ $aur_installer == "pikaur" ]]; then
             install_pikaur
-        fi
-        if [[ $aur_installer == "yay" ]]; then
+        elif [[ $aur_installer == "yay" ]]; then
             install_yay
         fi
     fi
