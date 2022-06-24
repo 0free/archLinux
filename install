@@ -269,8 +269,6 @@ packages_list() {
             f3d blockbench-bin
             # map
             google-earth-pro
-            # 3d printer
-            octoprint
             # USB driver
             asekey
             # math
