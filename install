@@ -254,7 +254,7 @@ packages_list() {
             # JavaScript
             flow-bin runjs-bin
             # TypeScript
-            assemblyscript
+            #assemblyscript
             # javascript/css
             esbuild-bin
             # database
