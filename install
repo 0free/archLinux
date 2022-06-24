@@ -176,6 +176,8 @@ packages_list() {
             code stylelint
             # TypeScript
             typescript
+            # tensorflow
+            tensorflow
             # mauikit
             mauikit mauikit-accounts mauikit-filebrowsing mauikit-imagetools mauikit-texteditor
             # bitcoin
