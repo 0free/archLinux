@@ -1107,7 +1107,7 @@ else
     if mountpoint -q /mnt; then
         if [[ -f /mnt/etc/fstab ]]; then
             change_root
-        elif [[ -f /boot/initramfs-linux-lts-fallback.img ]];
+        elif [[ -f /boot/initramfs-linux-lts-fallback.img ]]; then
             finish
         else
             install_base
