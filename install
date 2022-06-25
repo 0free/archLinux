@@ -745,9 +745,18 @@ setup_desktop() {
     fi
 
     clean_packages
+
     enable_services
-    add_commands
-    set_initcpio
+
+    if ! grep -qEw "custom commands" "/home/$USER/.bashrc"; then
+        add_commands
+    fi
+
+    if [[ ! -f /boot/initramfs-linux-lts-fallback.img ]]; then
+        set_initcpio
+    fi
+
+    finish
 
 }
 
@@ -994,8 +1003,6 @@ set_initcpio() {
     mkinitcpio -p linux
     mkinitcpio -p linux-lts
 
-    finish
-
 }
 
 finish() {
@@ -1092,11 +1099,7 @@ if [[ -f /root/chroot ]]; then
     aur_installer=$(cat /root/aur)
     if [ $(find /home -maxdepth 1 -type d | wc -l) -ne 1 ]; then
         USER=$(ls /home)
-        if grep -qEw "# custom commands" "/home/$USER/.bashrc"; then
-            set_initcpio
-        else
-            setup_desktop
-        fi
+        setup_desktop
     else
         configure
     fi
@@ -1104,6 +1107,8 @@ else
     if mountpoint -q /mnt; then
         if [[ -f /mnt/etc/fstab ]]; then
             change_root
+        elif [[ -f /boot/initramfs-linux-lts-fallback.img ]];
+            finish
         else
             install_base
         fi
