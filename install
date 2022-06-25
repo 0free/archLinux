@@ -1,7 +1,7 @@
 #!/bin/bash
 
 bootsize='500' # MB
-swapfile='0' # MB
+swapfile='2048M' # MB
 timezone='Asia/Muscat'
 language=(ar_OM en_US)
 keymaps=(us)
@@ -1028,7 +1028,7 @@ create_swap_file() {
     echo ">>> creating swap file"
 
     if grep -q zfs /etc/fstab; then
-        zfs create -V "$swapfile"M -b $(getconf PAGESIZE) -o compression=zle \
+        zfs create -V $swapfile -b $(getconf PAGESIZE) -o compression=zle \
         -o logbias=throughput -o sync=always -o primarycache=metadata \
         -o secondarycache=none -o com.sun:auto-snapshot=false zroot/swap
         mkswap -f "$root_drive"/zroot/swap
@@ -1036,13 +1036,15 @@ create_swap_file() {
         if ! grep -Ew "/swap none swap discard 0 0" /etc/fstab; then
             echo '/dev/zvol/zroot/swap none swap discard 0 0' >> /etc/fstab
         fi
-    fi
-
-    if [[ ! -f /swapfile ]]; then
-        dd if=/dev/zero of=/swapfile bs=1M count=$swapfile status=progress
-        chmod 600 /swapfile
-        mkswap -f /swapfile
-        swapon /swapfile
+    else
+        if [[ ! -f /swapfile ]]; then
+            truncate -s 0 /swapfile
+            chattr +C /swapfile
+            dd if=/dev/zero of=/swapfile bs=1M count=$swapfile status=progress
+            chmod 600 /swapfile
+            mkswap -f /swapfile
+            swapon /swapfile
+        fi
     fi
 
     if ! grep swapfile /etc/fstab; then
