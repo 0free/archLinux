@@ -594,8 +594,8 @@ set_fstab() {
 
 change_root() {
 
-    echo ">>> moving install script"
     if [[ -f install ]]; then
+        echo ">>> moving install script"
         mv install /mnt/root/install
     fi
 
