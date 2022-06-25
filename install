@@ -1015,17 +1015,17 @@ finish() {
         if [[ ! -f /boot/grub/grub.cfg ]]; then
             install_grub
         fi
+
+        if grep -q zfs /etc/fstab; then
+            echo ">>> un-mount ZFS"
+            exit && zfs umount -a && zpool export zroot
+        fi
+
+        echo ">>> un-mount and reboot"
+        exit && umount -a && reboot
     fi
 
-    rm /root/*
-
-    if grep -q zfs /etc/fstab; then
-        echo ">>> un-mount ZFS"
-        exit && zpool export zroot && zfs umount -a
-    fi
-
-    echo ">>> un-mount and reboot"
-    exit && umount -a && reboot
+    #rm /root/*
 
 }
 
