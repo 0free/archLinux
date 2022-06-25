@@ -41,6 +41,11 @@ packages_list() {
         archlinux-keyring
     )
 
+    AUR_PACKAGE+=(
+        # browser
+        google-chrome
+    )
+
     if grep -q zfs /etc/fstab; then
         AUR_PACKAGE+=(
             zfs-utils zfs-dkms
@@ -219,8 +224,6 @@ packages_list() {
         AUR_PACKAGE+=(
             # icons
             colloid-icon-theme-git
-            # browser
-            google-chrome
             # system restore
             timeshift
             # pdf
