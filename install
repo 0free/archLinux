@@ -928,7 +928,7 @@ add_commands() {
 
     if [[ $aur_installer == "makepkg" ]]; then
         echo "alias update='sudo pacman -Syu --needed --noconfirm'" >> /home/$USER/.bashrc
-        echo "alias aur='makepkg -sic --needed --noconfirm'" >> /home/$USER/.bashrc
+        echo -e "alias aur='\ncd ~\ngit clone https://aur.archlinux.org/$2.git || cd ~/$2\ncd ~/$2\nmakepkg -sic --needed --noconfirm\nrm -r ~/$2 && cd ~\n'" >> /home/$USER/.bashrc
         echo "alias clean='sudo pacman -Scc --noconfirm && makepkg -rc --noconfirm'" >> /home/$USER/.bashrc
     fi
 
