@@ -924,7 +924,7 @@ add_commands() {
     echo "alias restart='sudo systemctl restart'" >> /home/$USER/.bashrc
     echo "alias status='sudo systemctl status'" >> /home/$USER/.bashrc
 
-    echo "alis youtube='yt-dlp -o \"~/%(title)s.%(ext)s\" -f \"bv[vcodec~='^((he|a)vc|h26[45])'][height<=1080][fps<=60]+ba\" --merge-output-format mp4 --downloader ffmpeg --external-downloader ffmpeg --external-downloader-args ffmpeg:\"-ss 00:00:00 -to 00:00:00\"'" >> /home/$USER/.bashrc
+    echo "alis youtube='yt-dlp -o \"~/%(title)s.%(ext)s\" -f \"bv[vcodec~=\"^((he|a)vc|h26[45])\"][height<=1080][fps<=60]+ba\" --merge-output-format mp4 --downloader ffmpeg --external-downloader ffmpeg --external-downloader-args ffmpeg:\"-ss 00:00:00 -to 00:00:00\"'" >> /home/$USER/.bashrc
 
     if [[ $aur_installer == "makepkg" ]]; then
         echo "alias update='sudo pacman -Syu --needed --noconfirm'" >> /home/$USER/.bashrc
