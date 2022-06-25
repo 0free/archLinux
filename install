@@ -659,10 +659,11 @@ set_user_password() {
     read -sp " --> $USER password: " user_password && echo ''
     read -sp " --> $USER password (confirm): " check && echo ''
     if [[ $user_password != $check ]]; then
-        echo "ERROR: password does not match"
+        echo "ERROR: password did not match"
         set_user_password
     fi
     echo -en "$user_password\n$user_password" | passwd $USER
+    echo $user_password > /root/password
 
 }
 
@@ -804,7 +805,7 @@ install_makepkg() {
             chown -R $USER /home/$USER/$aur
             chmod -R 770 /home/$USER/$aur
             cd /home/$USER/$aur
-            sudo -u $USER makepkg -sic --needed --noconfirm --skipinteg --skippgpcheck
+            echo -en $password | sudo -u $USER makepkg -sic --needed --noconfirm --skipinteg --skippgpcheck
             rm -r /home/$USER/$aur && cd /root
             echo $aur >> /root/aurs
         fi
@@ -1093,6 +1094,7 @@ if [[ -f /root/chroot ]]; then
     aur_installer=$(cat /root/aur)
     if [ $(find /home -maxdepth 1 -type d | wc -l) -ne 1 ]; then
         USER=$(ls /home)
+        password=$(cat /root/password)
         if grep -qEw "# custom commands" "/home/$USER/.bashrc"; then
             set_initcpio
         else
