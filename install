@@ -693,9 +693,6 @@ set_locale() {
         read -p " --- language en_US: " language
         set_locale
     fi
-    if [[ -f /etc/locale.conf ]]; then
-        rm /etc/locale.conf
-    fi
     for lang in ${language[@]}; do
         if grep -Ew "$lang" /etc/locale.gen; then
             sed -i "s/^#$lang.UTF-8/$lang.UTF-8/" /etc/locale.gen
