@@ -1099,7 +1099,11 @@ if [[ -f /root/chroot ]]; then
     aur_installer=$(cat /root/aur)
     if [ $(find /home -maxdepth 1 -type d | wc -l) -ne 1 ]; then
         USER=$(ls /home)
-        setup_desktop
+        if [[ -f /boot/initramfs-linux-lts-fallback.img ]]; then
+            finish
+        else
+            setup_desktop
+        fi
     else
         configure
     fi
@@ -1107,8 +1111,6 @@ else
     if mountpoint -q /mnt; then
         if [[ -f /mnt/etc/fstab ]]; then
             change_root
-        elif [[ -f /boot/initramfs-linux-lts-fallback.img ]]; then
-            finish
         else
             install_base
         fi
