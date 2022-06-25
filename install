@@ -420,12 +420,15 @@ setup_drive() {
 
     computers=(minimal miner server workstation)
     menu "select a computer" computer ${computers[@]}
+    echo $computer > /mnt/root/chroot
 
     desktops=(gnome kde)
     menu "select a desktop" desktop ${desktops[@]}
+    echo $desktop > /mnt/root/desktop
 
     aur_installers=(makepkg aura paru pikaur yay)
     menu "select AUR installer" aur_installer ${aur_installers[@]}
+    echo $aur_installer > /mnt/root/aur
 
     if [[ ! $root_drive ]]; then
         echo ">>> wiping filesystm"
@@ -590,17 +593,6 @@ set_fstab() {
 }
 
 change_root() {
-
-    echo ">>> creating check file"
-    if [[ ! -f /mnt/root/chroot ]]; then
-        echo $computer > /mnt/root/chroot
-    fi
-    if [[ ! -f /mnt/root/desktop ]]; then
-        echo $desktop > /mnt/root/desktop
-    fi
-    if [[ ! -f /mnt/root/aur ]]; then
-        echo $aur_installer > /mnt/root/aur
-    fi
 
     echo ">>> moving install script"
     if [[ -f install ]]; then
