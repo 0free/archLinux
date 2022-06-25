@@ -694,9 +694,9 @@ set_locale() {
         set_locale
     fi
     for lang in ${language[@]}; do
-        if grep -Ew "$lang" /etc/locale.gen; then
+        if grep -qi $lang /etc/locale.gen; then
             sed -i "s/^#$lang.UTF-8/$lang.UTF-8/" /etc/locale.gen
-            echo "lang=$lang.UTF-8" >> /etc/locale.conf
+            localectl set-locale LANG=$lang
         fi
     done
     locale-gen
@@ -704,7 +704,7 @@ set_locale() {
     echo "LOCALE='en_US.UTF-8'" > /etc/vconsole.conf
     echo "KEYMAP='us'" >> /etc/vconsole.conf
     for keymap in ${keymaps[@]}; do
-        if localectl list-keymaps | grep -qi "$keymap"; then
+        if localectl list-keymaps | grep -qi $keymap; then
             echo "KEYMAP_TOGGLE=$keymap" >> /etc/vconsole.conf
         fi
     done
