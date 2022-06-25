@@ -1031,9 +1031,9 @@ create_swap_file() {
         zfs create -V $swapfile -b $(getconf PAGESIZE) -o compression=zle \
         -o logbias=throughput -o sync=always -o primarycache=metadata \
         -o secondarycache=none -o com.sun:auto-snapshot=false zroot/swap
-        mkswap -f "$root_drive"/zroot/swap
-        swapon "$root_drive"/zroot/swap
-        if ! grep -Ew "/swap none swap discard 0 0" /etc/fstab; then
+        mkswap -f /swapfile
+        swapon /swapfile
+        if ! grep -q swap /etc/fstab; then
             echo '/dev/zvol/zroot/swap none swap discard 0 0' >> /etc/fstab
         fi
     else
@@ -1045,10 +1045,9 @@ create_swap_file() {
             mkswap -f /swapfile
             swapon /swapfile
         fi
-    fi
-
-    if ! grep swapfile /etc/fstab; then
-        echo '/swapfile none swap defaults 0 0' >> /etc/fstab
+        if ! grep -q swapfile /etc/fstab; then
+            echo '/swapfile none swap defaults 0 0' >> /etc/fstab
+        fi
     fi
 
 }
