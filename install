@@ -1004,22 +1004,19 @@ finish() {
     fi
 
     if mountpoint -q /boot; then
-        if [[ ! -f /boot/grub/grub.cfg ]]; then
-            install_grub
-        fi
-
-        if grep -q zfs /etc/fstab; then
-            echo ">>> un-mount ZFS"
-            zfs umount -a && zpool export zroot
-        else
-            echo ">>> un-mount"
-            unmount -R /mnt && exit
-        fi
-
-        echo ">>> rebooting"
-        reboot
+        install_grub
     fi
 
+    if grep -q zfs /etc/fstab; then
+        echo ">>> un-mount ZFS"
+        zfs umount -a && zpool export zroot
+    else
+        echo ">>> un-mount"
+        unmount -R /mnt && exit
+    fi
+
+    echo ">>> rebooting"
+    reboot
     #rm /root/*
 
 }
@@ -1074,6 +1071,7 @@ install_grub() {
         sed -i "s|rpool=.*|rpool=\`zdb -l \${GRUB_DEVICE} \| grep -E '[[:blank:]]name' \| cut -d\\\' -f 2\`|" /etc/grub.d/10_linux
     fi
 
+    echo ">>> cloning grub-theme"
     git clone https://github.com/0free/grub-theme.git
     mv grub-theme /boot/grub/themes/
 
