@@ -1038,10 +1038,10 @@ create_swap_file() {
             -o logbias=throughput -o sync=always -o primarycache=metadata \
             -o secondarycache=none -o com.sun:auto-snapshot=false zroot/swap
             mkswap -f zroot/swap
+            if ! grep -q swap /etc/fstab; then
+                echo 'zroot/swap none swap discard 0 0' >> /etc/fstab
+            fi
             swapon zroot/swap
-        fi
-        if ! grep -q swap /etc/fstab; then
-            echo 'zroot/swap none swap discard 0 0' >> /etc/fstab
         fi
     else
         if [[ ! -f /swapfile ]]; then
@@ -1083,10 +1083,14 @@ install_grub() {
     fi
 
     if [[ ! -d /boot/grub/themes/grub-theme ]]; then
-        echo ">>> cloning grub-theme"
-        git clone https://github.com/0free/grub-theme.git
-        echo ">>> copying grub-theme"
-        mv /root/grub-theme /boot/grub/themes/
+        if [[ ! -d /grub-theme ]]; then
+            echo ">>> cloning grub-theme"
+            git clone https://github.com/0free/grub-theme.git
+            echo ">>> copying grub-theme"
+        fi
+        if [[ -d /grub-theme ]]; then
+            mv /grub-theme /boot/grub/themes/
+        fi
     fi
 
     sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=1/' /etc/default/grub
