@@ -477,15 +477,11 @@ create_zfs() {
     fi
     echo ">>> creating ZFS pool"
     zpool create -f -o ashift=12 -o autotrim=on \
-    -O recordsize=8192 -O acltype=posixacl -O compression=lz4 \
-    -O canmount=noauto -O devices=off \
+    -O recordsize=8192 -O compression=lz4 \
+    -O acltype=posixacl -O aclinherit=passthrough -O xattr=sa -O overlay=on \
     -O primarycache=metadata -O redundant_metadata=most -O logbias=throughput \
-    -O sync=disabled -O relatime=off -O atime=off \
-    -O xattr=sa -O overlay=on \
-    -O dnodesize=auto -O normalization=formD \
-    -O mountpoint=/ -R /mnt zroot $root_drive
-    echo ">>> setting ZFS"
-    zfs set secondarycache=all zroot
+    -O relatime=off -O atime=off -O dnodesize=auto -O normalization=formD \
+    -O canmount=noauto -O mountpoint=/ zroot $root_drive
     echo ">>> adding ZFS options"
     echo "options zfs l2arc_noprefetch=0" >> /etc/modprobe.d/zfs.conf
     echo "options zfs l2arc_write_max=536870912" >> /etc/modprobe.d/zfs.conf
@@ -514,6 +510,7 @@ create_zfs() {
     echo ">>> setting ZFS bootfs"
     zpool set bootfs=zroot zroot
     echo ">>> setting ZFS cache"
+    zfs set secondarycache=all zroot
     zpool set cachefile=/etc/zfs/zpool.cache zroot
     mkdir -p /mnt/etc/zfs
     mv /etc/zfs/zpool.cache /mnt/etc/zfs/zpool.cache
@@ -1016,8 +1013,9 @@ finish() {
         install_grub
     fi
 
-    rm /root/*
-    #unmount
+    #rm /root/*
+    #echo ">>> rebooting"
+    #reboot
 
 }
 
@@ -1095,23 +1093,6 @@ install_grub() {
 
     echo ">>> making grub config"
     grub-mkconfig -o /boot/grub/grub.cfg
-
-}
-
-unmount() {
-
-    if grep -q zfs /etc/fstab; then
-        echo ">>> un-mount ZFS pool"
-        zfs umount -a && zpool export zroot
-    fi
-
-    if mountpoint -q /mnt; then
-        echo ">>> un-mount"
-        umount -R /mnt
-    fi
-
-    echo ">>> rebooting"
-    exit && reboot
 
 }
 
