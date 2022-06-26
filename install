@@ -1076,14 +1076,15 @@ install_grub() {
 
     cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo
 
-    sed -i 's/GRUB_PRELOAD_MODULES="*"/GRUB_PRELOAD_MODULES="usb usb_keyboard ohci uhci ehci part_gpt nvme zfs zfscrypt zfsinfo"/' /etc/default/grub
-
     if grep -q zfs /etc/fstab; then
-        sed -i 's|^GRUB_CMDLINE_LINUX="*"|GRUB_CMDLINE_LINUX="root=ZFS=zroot/"|' /etc/default/grub
+        sed -i 's|^GRUB_CMDLINE_LINUX=".*"|GRUB_CMDLINE_LINUX="root=ZFS=zroot/"|' /etc/default/grub
+        sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard ohci uhci ehci part_gpt nvme zfs zfscrypt zfsinfo"|' /etc/default/grub
         echo 'export ZPOOL_VDEV_NAME_PATH=YES' >> /etc/profile.d/zpool_vdev_name_path.sh
         source /etc/profile.d/zpool_vdev_name_path.sh
         echo 'Defaults env_keep += "ZPOOL_VDEV_NAME_PATH"' >> /etc/sudoers
         sed -i "s|rpool=.*|rpool=\`zdb -l \${GRUB_DEVICE} \| grep -E '[[:blank:]]name' \| cut -d\\\' -f 2\`|" /etc/grub.d/10_linux
+    else
+        sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard ohci uhci ehci part_gpt nvme"|' /etc/default/grub
     fi
 
     if [[ ! -d /boot/grub/themes/starfield ]]; then
@@ -1102,10 +1103,8 @@ install_grub() {
     fi
 
     sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=1/' /etc/default/grub
-
     sed -i 's/loglevel=3/loglevel=0/' /etc/default/grub
-
-    sed -i 's|#GRUB_THEME="/path/to/gfxtheme"|GRUB_THEME="/boot/grub/themes/grub-theme/theme.txt"|' /etc/default/grub
+    sed -i 's|#GRUB_THEME="/path/to/gfxtheme"|GRUB_THEME="/grub/themes/grub-theme/theme.txt"|' /etc/default/grub
 
     echo ">>> making grub config"
     grub-mkconfig -o /boot/grub/grub.cfg
