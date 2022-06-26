@@ -1074,11 +1074,16 @@ install_grub() {
         sed -i "s|rpool=.*|rpool=\`zdb -l \${GRUB_DEVICE} \| grep -E '[[:blank:]]name' \| cut -d\\\' -f 2\`|" /etc/grub.d/10_linux
     fi
 
-    echo ">>> cloning grub-theme"
-    git clone https://github.com/0free/grub-theme.git
-    echo ">>> copying grub-theme"
-    rm -r /boot/grub/themes/starfield
-    mv /root/grub-theme /boot/grub/themes/
+    if [[ ! -d /boot/grub/themes/starfield ]]; then
+        rm -r /boot/grub/themes/starfield
+    fi
+
+    if [[ ! -d /boot/grub/themes/grub-theme ]]
+        echo ">>> cloning grub-theme"
+        git clone https://github.com/0free/grub-theme.git
+        echo ">>> copying grub-theme"
+        mv /root/grub-theme /boot/grub/themes/
+    fi
 
     sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=1/' /etc/default/grub
 
