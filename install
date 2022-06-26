@@ -1073,6 +1073,7 @@ install_grub() {
 
     echo ">>> cloning grub-theme"
     git clone https://github.com/0free/grub-theme.git
+    rm -r /boot/grub/themes/starfield
     mv grub-theme /boot/grub/themes/
 
     sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=1/' /etc/default/grub
