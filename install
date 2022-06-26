@@ -420,15 +420,12 @@ setup_drive() {
 
     computers=(minimal miner server workstation)
     menu "select a computer" computer ${computers[@]}
-    echo $computer > /mnt/root/chroot
 
     desktops=(gnome kde)
     menu "select a desktop" desktop ${desktops[@]}
-    echo $desktop > /mnt/root/desktop
 
     aur_installers=(makepkg aura paru pikaur yay)
     menu "select AUR installer" aur_installer ${aur_installers[@]}
-    echo $aur_installer > /mnt/root/aur
 
     if [[ ! $root_drive ]]; then
         echo ">>> wiping filesystm"
@@ -476,7 +473,7 @@ create_zfs() {
     -O acltype=posixacl -O aclinherit=passthrough -O xattr=sa -O overlay=on \
     -O primarycache=metadata -O redundant_metadata=most -O logbias=throughput \
     -O relatime=off -O atime=off -O dnodesize=auto -O normalization=formD \
-    -O canmount=noauto -O mountpoint=/ zroot $root_drive
+    -O canmount=noauto -O mountpoint=/ zfspool $root_drive
     echo ">>> adding ZFS options"
     echo "options zfs l2arc_noprefetch=0" >> /etc/modprobe.d/zfs.conf
     echo "options zfs l2arc_write_max=536870912" >> /etc/modprobe.d/zfs.conf
@@ -506,8 +503,8 @@ create_zfs() {
     echo ">>> setting ZFS cache"
     mkdir -p /mnt/etc/zfs
     mv /etc/zfs/zpool.cache /mnt/etc/zfs/zpool.cache
-    zfs set secondarycache=all zroot
-    zpool set cachefile=/etc/zfs/zpool.cache zroot
+    zfs set secondarycache=all zfspool
+    zpool set cachefile=/etc/zfs/zpool.cache zfspool
     chmod a-w /mnt/etc/zfs/zpool.cache
     chattr +i /mnt/etc/zfs/zpool.cache
 
@@ -518,9 +515,9 @@ mount_root() {
     echo ">>> mounting root drive"
     if [[ $filesystem == "zfs" ]]; then
         echo ">>> exporting ZFS"
-        zpool export zroot
+        zpool export zfspool
         echo ">>> importing ZFS"
-        zpool import zroot -d $root_drive -R /mnt
+        zpool import zfspool -d $root_drive -R /mnt
         echo ">>> mounting any ZFS datasets"
         zfs mount -a
     else
@@ -576,10 +573,13 @@ set_fstab() {
     echo ">>> setting fstab"
     genfstab -U -p /mnt >> /mnt/etc/fstab
     if grep -q zfs /mnt/etc/fstab; then
-        sed -i 's/^zroot/#zroot/g' /mnt/etc/fstab
+        sed -i 's/^zfspool/#zfspool/g' /mnt/etc/fstab
     fi
     sed -i 's/relatime,space_cache=v2/noatime,compress=zstd:1,ssd,discard=async/g' /mnt/etc/fstab
 
+    echo $computer > /mnt/root/chroot
+    echo $desktop > /mnt/root/desktop
+    echo $aur_installer > /mnt/root/aur
     change_root
 
 }
@@ -1018,15 +1018,15 @@ create_swap_file() {
     echo ">>> creating swap file"
 
     if grep -q zfs /etc/fstab; then
-        if ! zfs get volsize zroot/swap; then
+        if ! zfs get volsize zfspool/swap; then
             zfs create -V "$swapfile"M -b 8192 -o compression=zle \
             -o logbias=throughput -o sync=always -o primarycache=metadata \
-            -o secondarycache=none -o com.sun:auto-snapshot=false zroot/swap
-            mkswap -f zroot/swap
+            -o secondarycache=none -o com.sun:auto-snapshot=false zfspool/swap
+            mkswap -f zfspool/swap
             if ! grep -q swap /etc/fstab; then
-                echo 'zroot/swap none swap discard 0 0' >> /etc/fstab
+                echo 'zfspool/swap none swap discard 0 0' >> /etc/fstab
             fi
-            swapon zroot/swap
+            swapon zfspool/swap
         fi
     else
         if [[ ! -f /swapfile ]]; then
@@ -1056,12 +1056,11 @@ install_grub() {
     cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo
 
     if grep -q zfs /etc/fstab; then
-        sed -i 's|^GRUB_CMDLINE_LINUX=".*"|GRUB_CMDLINE_LINUX="root=ZFS=zroot"|' /etc/default/grub
+        sed -i 's|^GRUB_CMDLINE_LINUX=".*"|GRUB_CMDLINE_LINUX="root=ZFS=zfspool"|' /etc/default/grub
         sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard ohci uhci ehci part_gpt nvme zfs zfscrypt zfsinfo"|' /etc/default/grub
         echo 'export ZPOOL_VDEV_NAME_PATH=YES' >> /etc/profile.d/zpool_vdev_name_path.sh
         source /etc/profile.d/zpool_vdev_name_path.sh
         echo 'Defaults env_keep += "ZPOOL_VDEV_NAME_PATH"' >> /etc/sudoers
-        sed -i "s|rpool=.*|rpool=\`zdb -l \${GRUB_DEVICE} \| grep -E '[[:blank:]]name' \| cut -d\\\' -f 2\`|" /etc/grub.d/10_linux
     else
         sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard ohci uhci ehci part_gpt nvme"|' /etc/default/grub
     fi
