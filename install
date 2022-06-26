@@ -1014,8 +1014,6 @@ finish() {
 
     if mountpoint -q /boot; then
         install_grub
-        echo ">>> un-mount boot"
-        umount /mnt/boot
     fi
 
     rm /root/*
