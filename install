@@ -1016,6 +1016,8 @@ finish() {
         umount /mnt/boot
     fi
 
+    rm /root/*
+
     if grep -q zfs /etc/fstab; then
         echo ">>> un-mount ZFS pool"
         zfs umount -a && zpool export zroot
@@ -1023,12 +1025,11 @@ finish() {
 
     if mountpoint -q /mnt; then
         echo ">>> un-mount"
-        umount -R /mnt && exit
+        umount -R /mnt
     fi
 
     echo ">>> rebooting"
-    rm /root/*
-    exit && exit && reboot
+    exit && reboot
 
 }
 
