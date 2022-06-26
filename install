@@ -599,6 +599,10 @@ change_root() {
         mv install /mnt/root/install
     fi
 
+    if mountpoint -q /mnt/dev; then
+        umount -l /mnt/dev
+    fi
+
     echo ">>> changing root"
     arch-chroot /mnt sh /root/install
 
