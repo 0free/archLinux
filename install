@@ -1007,17 +1007,20 @@ finish() {
         install_grub
     fi
 
+    echo ">> un-mount boot"
+    unmount /mnt/boot
+
     if grep -q zfs /etc/fstab; then
-        echo ">>> un-mount ZFS"
+        echo ">>> un-mount ZFS pool"
         zfs umount -a && zpool export zroot
     else
-        echo ">>> un-mount"
-        unmount -R /mnt && exit
+        echo ">>> un-mount root"
+        umount /mnt && exit
     fi
 
     echo ">>> rebooting"
+    rm /root/*
     reboot
-    #rm /root/*
 
 }
 
@@ -1074,7 +1077,7 @@ install_grub() {
     echo ">>> cloning grub-theme"
     git clone https://github.com/0free/grub-theme.git
     rm -r /boot/grub/themes/starfield
-    mv grub-theme /boot/grub/themes/
+    mv /root/grub-theme /boot/grub/themes/
 
     sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=1/' /etc/default/grub
 
