@@ -506,10 +506,10 @@ create_zfs() {
     echo ">>> checking ZFS pool"
     zpool status
     echo ">>> setting ZFS cache"
-    mkdir -p /mnt/etc/zfs
-    mv /etc/zfs/zpool.cache /mnt/etc/zfs/zpool.cache
     zfs set secondarycache=all zfspool
     zpool set cachefile=/etc/zfs/zpool.cache zfspool
+    mkdir -p /mnt/etc/zfs
+    mv /etc/zfs/zpool.cache /mnt/etc/zfs/zpool.cache
     chmod a-w /mnt/etc/zfs/zpool.cache
     chattr +i /mnt/etc/zfs/zpool.cache
 
