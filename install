@@ -1012,7 +1012,7 @@ finish() {
     fi
 
     echo ">> un-mount boot"
-    unmount /mnt/boot
+    umount /mnt/boot
 
     if grep -q zfs /etc/fstab; then
         echo ">>> un-mount ZFS pool"
