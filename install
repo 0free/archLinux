@@ -750,11 +750,12 @@ setup_desktop() {
         add_commands
     fi
 
-    if [[ ! -f /boot/initramfs-linux-lts-fallback.img ]]; then
-        set_initcpio
+    if [[ $swapfile -gt 0 ]]; then
+        create_swap_file
     fi
 
-    finish
+    set_initcpio
+    remove_files
 
 }
 
@@ -981,45 +982,6 @@ add_commands() {
 
 }
 
-set_initcpio() {
-
-    sed -i 's/block filesystems/block lvm2 filesystems/' /etc/mkinitcpio.conf
-
-    if grep -q btrfs /etc/fstab; then
-        MODULES+=' btrfs'
-    fi
-
-    if grep -q zfs /etc/fstab; then
-        if ! grep -q " zfs " /etc/mkinitcpio.conf; then
-            MODULES+=' zfs'
-            sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
-        fi
-    fi
-
-    sed -i "s|^MODULES=(.*)|MODULES=($MODULES)|" /etc/mkinitcpio.conf
-
-    echo ">>> configuring initial ramdisk"
-    mkinitcpio -p linux
-    mkinitcpio -p linux-lts
-
-}
-
-finish() {
-
-    if [[ $swapfile -gt 0 ]]; then
-        create_swap_file
-    fi
-
-    if mountpoint -q /boot; then
-        install_grub
-    fi
-
-    #rm /root/*
-    #echo ">>> rebooting"
-    #reboot
-
-}
-
 create_swap_file() {
 
     echo ">>> creating swap file"
@@ -1047,6 +1009,40 @@ create_swap_file() {
         if ! grep -q swapfile /etc/fstab; then
             echo '/swapfile none swap defaults 0 0' >> /etc/fstab
         fi
+    fi
+
+}
+
+set_initcpio() {
+
+    sed -i 's/block filesystems/block lvm2 filesystems/' /etc/mkinitcpio.conf
+
+    if grep -q btrfs /etc/fstab; then
+        MODULES+=' btrfs'
+    fi
+
+    if grep -q zfs /etc/fstab; then
+        if ! grep -q " zfs " /etc/mkinitcpio.conf; then
+            MODULES+=' zfs'
+            sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
+        fi
+    fi
+
+    sed -i "s|^MODULES=(.*)|MODULES=($MODULES)|" /etc/mkinitcpio.conf
+
+    echo ">>> configuring initial ramdisk"
+    mkinitcpio -p linux
+    mkinitcpio -p linux-lts
+
+}
+
+remove_files() {
+
+    if [[ -f /root/desktop ]]; then
+        rm /root/desktop
+    fi
+    if [[ -f /root/aur ]]; then
+        rm /root/aur
     fi
 
 }
@@ -1104,10 +1100,12 @@ if [[ -f /root/chroot ]]; then
     aur_installer=$(cat /root/aur)
     if [ $(find /home -maxdepth 1 -type d | wc -l) -ne 1 ]; then
         USER=$(ls /home)
-        if [[ -f /boot/initramfs-linux-lts-fallback.img ]]; then
-            finish
-        else
+        if [[ -f /root/desktop ]]; then
             setup_desktop
+        else
+            if mountpoint -q /boot; then
+                install_grub
+            fi
         fi
     else
         configure
