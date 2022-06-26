@@ -1033,15 +1033,15 @@ create_swap_file() {
     echo ">>> creating swap file"
 
     if grep -q zfs /etc/fstab; then
-        if ! zfs get keylocation swap; then
+        if ! zfs get volzise zroot/swap; then
             zfs create -V "$swapfile"M -b 8192 -o compression=zle \
             -o logbias=throughput -o sync=always -o primarycache=metadata \
-            -o secondarycache=none -o com.sun:auto-snapshot=false swap
+            -o secondarycache=none -o com.sun:auto-snapshot=false zroot/swap
+            mkswap -f zroot/swap
+            swapon zroot/swap
         fi
-        mkswap -f swap
-        swapon swap
         if ! grep -q swap /etc/fstab; then
-            echo 'swap none swap discard 0 0' >> /etc/fstab
+            echo 'zroot/swap none swap discard 0 0' >> /etc/fstab
         fi
     else
         if [[ ! -f /swapfile ]]; then
