@@ -469,12 +469,7 @@ setup_drive() {
 create_zfs() {
 
     echo ">>> loading ZFS modules"
-    modprobe zfs
-    echo ">>> checking ZFS modules"
-    if ! lsmod | grep -qi zfs; then
-        echo 'ERROR: ZFS modules are missing'
-        create_rootfs
-    fi
+    modprobe zfs || echo 'ERROR: ZFS modules are missing' && create_rootfs
     echo ">>> creating ZFS pool"
     zpool create -f -o ashift=12 -o autotrim=on \
     -O recordsize=8192 -O compression=lz4 \
@@ -488,7 +483,7 @@ create_zfs() {
     echo "options zfs l2arc_write_boost=536870912" >> /etc/modprobe.d/zfs.conf
     echo "options zfs l2arc_headroom=12" >> /etc/modprobe.d/zfs.conf
     echo "options zfs zfs_arc_max=536870912" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs zfs_arc_min=33554432" >> /etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_arc_min=268435456" >> /etc/modprobe.d/zfs.conf
     echo "options zfs zfs_prefetch_disable=0" >> /etc/modprobe.d/zfs.conf
     echo "options zfs zfs_top_maxinflight=320" >> /etc/modprobe.d/zfs.conf
     echo "options zfs zfs_txg_timeout=15" >> /etc/modprobe.d/zfs.conf
@@ -507,8 +502,6 @@ create_zfs() {
     mount_root
     echo ">>> checking ZFS pool"
     zpool status
-    echo ">>> setting ZFS bootfs"
-    zpool set bootfs=zroot zroot
     echo ">>> setting ZFS cache"
     zfs set secondarycache=all zroot
     zpool set cachefile=/etc/zfs/zpool.cache zroot
@@ -526,7 +519,7 @@ mount_root() {
         echo ">>> exporting ZFS"
         zpool export zroot
         echo ">>> importing ZFS"
-        zpool import -d $root_drive -R /mnt zroot
+        zpool import zroot -d $root_drive -R /mnt
         echo ">>> mounting any ZFS datasets"
         zfs mount -a
     else
