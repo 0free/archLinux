@@ -985,6 +985,8 @@ add_commands() {
 
 set_initcpio() {
 
+    sed -i 's/block filesystems/block lvm2 filesystems/' /etc/mkinitcpio.conf
+
     if grep -q btrfs /etc/fstab; then
         MODULES+=' btrfs'
     fi
@@ -996,8 +998,7 @@ set_initcpio() {
         fi
     fi
 
-    sed -i "s|^MODULES=()|MODULES=($MODULES)|" /etc/mkinitcpio.conf
-    sed -i 's/block filesystems/block lvm2 filesystems/' /etc/mkinitcpio.conf
+    sed -i "s|^MODULES=(.*)|MODULES=($MODULES)|" /etc/mkinitcpio.conf
 
     echo ">>> configuring initial ramdisk"
     mkinitcpio -p linux
@@ -1065,7 +1066,7 @@ install_grub() {
     cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo
 
     if grep -q zfs /etc/fstab; then
-        sed -i 's|^GRUB_CMDLINE_LINUX=".*"|GRUB_CMDLINE_LINUX="root=ZFS=zroot/"|' /etc/default/grub
+        sed -i 's|^GRUB_CMDLINE_LINUX=".*"|GRUB_CMDLINE_LINUX="root=ZFS=zroot"|' /etc/default/grub
         sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard ohci uhci ehci part_gpt nvme zfs zfscrypt zfsinfo"|' /etc/default/grub
         echo 'export ZPOOL_VDEV_NAME_PATH=YES' >> /etc/profile.d/zpool_vdev_name_path.sh
         source /etc/profile.d/zpool_vdev_name_path.sh
@@ -1092,7 +1093,7 @@ install_grub() {
 
     sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=1/' /etc/default/grub
     sed -i 's/loglevel=3/loglevel=0/' /etc/default/grub
-    sed -i 's|#GRUB_THEME="/path/to/gfxtheme"|GRUB_THEME="/grub/themes/grub-theme/theme.txt"|' /etc/default/grub
+    sed -i 's|#GRUB_THEME=".*"|GRUB_THEME="/grub/themes/grub-theme/theme.txt"|' /etc/default/grub
 
     echo ">>> making grub config"
     grub-mkconfig -o /boot/grub/grub.cfg
