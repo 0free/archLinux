@@ -482,6 +482,7 @@ create_zfs() {
     echo "options zfs l2arc_write_max=536870912" >> /etc/modprobe.d/zfs.conf
     echo "options zfs l2arc_write_boost=536870912" >> /etc/modprobe.d/zfs.conf
     echo "options zfs l2arc_headroom=12" >> /etc/modprobe.d/zfs.conf
+    echo "options scsi_mod scan=sync" >> /etc/modprobe.d/zfs.conf
     echo "options zfs zfs_arc_max=536870912" >> /etc/modprobe.d/zfs.conf
     echo "options zfs zfs_arc_min=268435456" >> /etc/modprobe.d/zfs.conf
     echo "options zfs zfs_prefetch_disable=0" >> /etc/modprobe.d/zfs.conf
@@ -503,10 +504,10 @@ create_zfs() {
     echo ">>> checking ZFS pool"
     zpool status
     echo ">>> setting ZFS cache"
-    zfs set secondarycache=all zroot
-    zpool set cachefile=/etc/zfs/zpool.cache zroot
     mkdir -p /mnt/etc/zfs
     mv /etc/zfs/zpool.cache /mnt/etc/zfs/zpool.cache
+    zfs set secondarycache=all zroot
+    zpool set cachefile=/etc/zfs/zpool.cache zroot
     chmod a-w /mnt/etc/zfs/zpool.cache
     chattr +i /mnt/etc/zfs/zpool.cache
 
