@@ -1,6 +1,6 @@
 #!/bin/bash
 
-bootsize='500' # MB
+bootsize='400' # MB
 swapfile='2048' # MB
 timezone='Asia/Muscat'
 language=(ar_OM en_US)
@@ -1076,6 +1076,7 @@ install_grub() {
 
     echo ">>> cloning grub-theme"
     git clone https://github.com/0free/grub-theme.git
+    echo ">>> copying grub-theme"
     rm -r /boot/grub/themes/starfield
     mv /root/grub-theme /boot/grub/themes/
 
