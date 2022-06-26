@@ -762,7 +762,7 @@ setup_desktop() {
 
 install_packages() {
 
-    if grep -q "#\[multilib\]"; then
+    if grep -q "#\[multilib\]" /etc/pacman.conf; then
         echo ">>> enabling multilib"
         sed -iz 's/\#\[multilib\]\n\#Include/\[multilib\]\nInclude/' /etc/pacman.conf
         sed -i ':a;N;s/\#\[multilib\]\n\#Include/\[multilib\]\nInclude/g;ba' /etc/pacman.conf
