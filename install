@@ -512,11 +512,14 @@ create_zfs() {
     mount_root
     echo ">>> checking ZFS pool"
     zpool status
-    echo ">>> setting bootfs & cache"
+    echo ">>> setting ZFS bootfs"
     zpool set bootfs=zroot zroot
+    echo ">>> setting ZFS cache"
     zpool set cachefile=/etc/zfs/zpool.cache zroot
     mkdir -p /mnt/etc/zfs
     mv /etc/zfs/zpool.cache /mnt/etc/zfs/zpool.cache
+    chmod a-w /mnt/etc/zfs/zpool.cache
+    chattr +i /mnt/etc/zfs/zpool.cache
 
 }
 
@@ -1076,7 +1079,7 @@ install_grub() {
     cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo
 
     if grep -q zfs /etc/fstab; then
-        sed -i 's|^GRUB_CMDLINE_LINUX=""|GRUB_CMDLINE_LINUX="root=ZFS=zroot/"|' /etc/default/grub
+        sed -i 's|^GRUB_CMDLINE_LINUX="*"|GRUB_CMDLINE_LINUX="root=ZFS=zroot/"|' /etc/default/grub
         echo 'export ZPOOL_VDEV_NAME_PATH=YES' >> /etc/profile.d/zpool_vdev_name_path.sh
         source /etc/profile.d/zpool_vdev_name_path.sh
         echo 'Defaults env_keep += "ZPOOL_VDEV_NAME_PATH"' >> /etc/sudoers
