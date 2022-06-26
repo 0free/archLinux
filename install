@@ -129,6 +129,8 @@ packages_list() {
                 kdeedu-data
                 # music
                 minuet
+                # finance
+                kmymoney
             )
             AUR_PACKAGE+=(
                 # theme
