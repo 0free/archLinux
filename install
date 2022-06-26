@@ -75,7 +75,7 @@ packages_list() {
 
         PACKAGES+=(
             # kde session
-            sddm sddm-kcm kde-workspace plasma-desktop kinit kwayland-integration kdeplasma-addons
+            sddm sddm-kcm plasma-desktop kinit kwayland-integration kdeplasma-addons
             # system
             konsole systemsettings 
             # kde tools
