@@ -1078,6 +1078,8 @@ install_grub() {
 
     cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo
 
+    sed -i 's/GRUB_PRELOAD_MODULES="*"/GRUB_PRELOAD_MODULES="part_gpt part_msdos nvme zfs zfscrypt zfsinfo"/' /etc/default/grub
+
     if grep -q zfs /etc/fstab; then
         sed -i 's|^GRUB_CMDLINE_LINUX="*"|GRUB_CMDLINE_LINUX="root=ZFS=zroot/"|' /etc/default/grub
         echo 'export ZPOOL_VDEV_NAME_PATH=YES' >> /etc/profile.d/zpool_vdev_name_path.sh
