@@ -473,7 +473,6 @@ create_zfs() {
     echo ">>> checking ZFS modules"
     if ! lsmod | grep -qi zfs; then
         echo 'ERROR: ZFS modules are missing'
-        filesystem=''
         create_rootfs
     fi
     echo ">>> creating ZFS pool"
@@ -530,9 +529,8 @@ mount_root() {
         echo ">>> exporting ZFS"
         zpool export zroot
         echo ">>> importing ZFS"
-        zpool import -d $root_drive -R /mnt zroot -N
-        echo ">>> mounting ZFS root"
-        zfs mount zroot
+        zpool import -d $root_drive -R /mnt zroot
+        echo ">>> mounting any ZFS datasets"
         zfs mount -a
     else
         mount $root_drive /mnt
