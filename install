@@ -718,7 +718,9 @@ setup_desktop() {
         rm /boot/intel-ucode.img
     fi
 
+    echo ">>> packages list"
     packages_list
+
     install_packages
 
     faillock --user $USER --reset
