@@ -1078,7 +1078,7 @@ install_grub() {
         rm -r /boot/grub/themes/starfield
     fi
 
-    if [[ ! -d /boot/grub/themes/grub-theme ]]
+    if [[ ! -d /boot/grub/themes/grub-theme ]]; then
         echo ">>> cloning grub-theme"
         git clone https://github.com/0free/grub-theme.git
         echo ">>> copying grub-theme"
