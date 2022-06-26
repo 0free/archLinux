@@ -1,6 +1,6 @@
 #!/bin/bash
 
-bootsize='400' # MB
+bootsize='399' # MB
 swapfile='0' # MB
 timezone='Asia/Muscat'
 language=(ar_OM en_US)
