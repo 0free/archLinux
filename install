@@ -1033,7 +1033,7 @@ create_swap_file() {
     echo ">>> creating swap file"
 
     if grep -q zfs /etc/fstab; then
-        if ! zfs get volzise zroot/swap; then
+        if ! zfs get volsize zroot/swap; then
             zfs create -V "$swapfile"M -b 8192 -o compression=zle \
             -o logbias=throughput -o sync=always -o primarycache=metadata \
             -o secondarycache=none -o com.sun:auto-snapshot=false zroot/swap
