@@ -75,15 +75,15 @@ packages_list() {
 
         PACKAGES+=(
             # kde session
-            sddm sddm-kcm plasma-desktop kinit kwayland-integration kdeplasma-addons
+            sddm sddm-kcm plasma-desktop plasma-workspace kinit kwayland-integration kdeplasma-addons
             # system
-            konsole systemsettings 
+            dolphin konsole systemsettings kde-gtk-config
             # kde tools
             kactivities kscreen kmenuedit bluedevil
             # kde theme
-            oxygen materia-kde kvantum-theme-materia
+            kdecoration oxygen materia-kde kvantum-theme-materia
             # kde app
-            dolphin
+            discover
         )
 
     fi
@@ -129,8 +129,6 @@ packages_list() {
                 kdeedu-data
                 # music
                 minuet
-                # finance
-                kmymoney
             )
             AUR_PACKAGE+=(
                 # theme
