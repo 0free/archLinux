@@ -476,7 +476,7 @@ create_zfs() {
         create_rootfs
     fi
     echo ">>> creating ZFS pool"
-    zpool create -f -o ashift=13 -o autotrim=on \
+    zpool create -f -o ashift=12 -o autotrim=on \
     -O recordsize=8192 -O acltype=posixacl -O compression=lz4 \
     -O canmount=noauto -O devices=off \
     -O primarycache=metadata -O redundant_metadata=most -O logbias=throughput \
@@ -1087,7 +1087,7 @@ install_grub() {
         sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard ohci uhci ehci part_gpt nvme"|' /etc/default/grub
     fi
 
-    if [[ ! -d /boot/grub/themes/starfield ]]; then
+    if [[ -d /boot/grub/themes/starfield ]]; then
         rm -r /boot/grub/themes/starfield
     fi
 
