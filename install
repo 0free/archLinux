@@ -1018,19 +1018,7 @@ finish() {
     fi
 
     rm /root/*
-
-    if grep -q zfs /etc/fstab; then
-        echo ">>> un-mount ZFS pool"
-        zfs umount -a && zpool export zroot
-    fi
-
-    if mountpoint -q /mnt; then
-        echo ">>> un-mount"
-        umount -R /mnt
-    fi
-
-    echo ">>> rebooting"
-    exit && reboot
+    #unmount
 
 }
 
@@ -1108,6 +1096,23 @@ install_grub() {
 
     echo ">>> making grub config"
     grub-mkconfig -o /boot/grub/grub.cfg
+
+}
+
+unmount() {
+
+    if grep -q zfs /etc/fstab; then
+        echo ">>> un-mount ZFS pool"
+        zfs umount -a && zpool export zroot
+    fi
+
+    if mountpoint -q /mnt; then
+        echo ">>> un-mount"
+        umount -R /mnt
+    fi
+
+    echo ">>> rebooting"
+    exit && reboot
 
 }
 
