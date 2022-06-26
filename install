@@ -1011,15 +1011,12 @@ finish() {
         install_grub
     fi
 
-    echo ">> un-mount boot"
-    umount /mnt/boot
-
     if grep -q zfs /etc/fstab; then
         echo ">>> un-mount ZFS pool"
         zfs umount -a && zpool export zroot
     else
-        echo ">>> un-mount root"
-        umount /mnt && exit
+        echo ">>> un-mount"
+        umount -R /mnt && exit
     fi
 
     echo ">>> rebooting"
