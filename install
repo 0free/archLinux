@@ -771,6 +771,7 @@ setup_desktop() {
 
     set_initcpio
     install_grub
+    finish
 
 }
 
@@ -1103,6 +1104,15 @@ install_grub() {
 
     echo ">>> making grub config"
     grub-mkconfig -o /boot/grub/grub.cfg
+
+}
+
+finish() {
+
+    rm -r /root/*
+    umount -R /mnt
+    zfs umount -a
+    zpool export rpool
 
 }
 
