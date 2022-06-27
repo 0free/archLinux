@@ -794,6 +794,13 @@ install_linux() {
     sed -i 's|^PRESETS=('default' 'fallback')|PRESETS=('default')|' /etc/mkinitcpio.d/linux-lts.preset
     sed -i 's|^PRESETS=('default' 'fallback')|PRESETS=('default')|' /etc/mkinitcpio.d/linux.preset
 
+    if [[ -f /boot/initramfs-linux-lts-fallback.img ]]; then
+        rm /boot/initramfs-linux-lts-fallback.img
+    fi
+    if [[ -f /boot/initramfs-linux-fallback.img ]]; then
+        rm /boot/initramfs-linux-fallback.img
+    fi
+
 }
 
 install_packages() {
