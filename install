@@ -474,20 +474,21 @@ create_zfs() {
        create_rootfs
     fi
     echo ">>> creating ZFS pool"
-    zpool create -f -o ashift=12 -O recordsize=8192 -O compression=lz4 \
-    -o autotrim=on -O acltype=posixacl -O aclinherit=passthrough \
+    zpool create -f -o ashift=12 -o autotrim=on -O recordsize=8192 \
+    -O compression=lz4 -O acltype=posixacl -O aclinherit=passthrough \
     -O devices=off -O xattr=sa -O overlay=on -O logbias=throughput \
     -O primarycache=metadata -O redundant_metadata=most \
     -O relatime=off -O atime=off -O dnodesize=legacy -O normalization=formD \
-    -O canmount=noauto -O mountpoint=/ -R /mnt rpool $root_drive
-    echo ">>> setting ZFS mountpoint"
-    zfs set mountpoint=/ rpool
-    echo ">>> setting ZFS pool as rootfs"
-    zpool set bootfs=rpool rpool
-    echo ">>> mounting ZFS"
-    mount_root
+    -O canmount=off -O mountpoint=none -R /mnt rpool $root_drive
     echo ">>> checking ZFS pool"
     zpool status
+    echo ">>> creating ZFS dataset"
+    zpool create -O canmount=noauto -O mountpoint=/ rpool/root
+    zfs set mountpoint=/ rpool/root
+    echo ">>> setting ZFS pool as rootfs"
+    zpool set bootfs=rpool/root rpool
+    echo ">>> mounting ZFS"
+    mount_root
     echo ">>> setting ZFS cache"
     zpool set cachefile=/etc/zfs/zpool.cache rpool
     rm /etc/zfs/zpool.cache
