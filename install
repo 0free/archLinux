@@ -474,9 +474,9 @@ create_zfs() {
     fi
     echo ">>> creating ZFS pool"
     zpool create -f -o ashift=12 -O recordsize=8192 -O compression=lz4 \
-    -o autotrim=on -o exec=no \
-    -O acltype=posixacl -O aclinherit=passthrough -O xattr=sa -O overlay=on \
-    -O primarycache=metadata -O redundant_metadata=most -O logbias=throughput \
+    -o autotrim=on -O exec=no -O acltype=posixacl -O aclinherit=passthrough \
+    -O xattr=sa -O overlay=on -O logbias=throughput \
+    -O primarycache=metadata -O redundant_metadata=most \
     -O relatime=off -O atime=off -O dnodesize=legacy -O normalization=formD \
     -O canmount=noauto -O mountpoint=/ -R /mnt zfspool $root_drive
     echo ">>> mounting ZFS"
