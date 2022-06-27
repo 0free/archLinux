@@ -488,8 +488,9 @@ create_zfs() {
     zpool set bootfs=rpool rpool
     echo ">>> setting ZFS cache"
     zpool set cachefile=/etc/zfs/zpool.cache rpool
+    rm /etc/zfs/zpool.cache
     mkdir -p /mnt/etc/zfs
-    mv /etc/zfs/zpool.cache /mnt/etc/zfs/zpool.cache
+    touch /mnt/etc/zfs/zpool.cache
     chmod a-w /mnt/etc/zfs/zpool.cache
     chattr +i /mnt/etc/zfs/zpool.cache
     zfs set secondarycache=all rpool
@@ -1077,6 +1078,7 @@ install_grub() {
         echo 'export ZPOOL_VDEV_NAME_PATH=YES' >> /etc/profile.d/zpool_vdev_name_path.sh
         source /etc/profile.d/zpool_vdev_name_path.sh
         echo 'Defaults env_keep += "ZPOOL_VDEV_NAME_PATH"' >> /etc/sudoer
+        sed -i "s|rpool=.*|rpool=\`zdb -l \${GRUB_DEVICE} \| grep -E '[[:blank:]]name' \| cut -d\\\' -f 2\`|" /etc/grub.d/10_linux
     else
         sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard part_gpt nvme"|' /etc/default/grub
     fi
@@ -1086,14 +1088,13 @@ install_grub() {
     fi
 
     if [[ ! -d /boot/grub/themes/grub-theme ]]; then
-        if [[ ! -d /grub-theme ]]; then
-            echo ">>> cloning grub-theme"
-            git clone https://github.com/0free/grub-theme.git
-        fi
-        if [[ -d /grub-theme ]]; then
+        echo ">>> cloning grub-theme"
+        git clone https://github.com/0free/grub-theme.git
+    fi
+
+    if [[ -d /root/grub-theme ]]; then
             echo ">>> moving grub-theme"
-            mv /grub-theme /boot/grub/themes/
-        fi
+            mv /root/grub-theme /boot/grub/themes/
     fi
 
     sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=1/' /etc/default/grub
