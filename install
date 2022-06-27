@@ -1063,6 +1063,9 @@ install_grub() {
     if grep -q zfs /etc/fstab; then
         sed -i 's|^GRUB_CMDLINE_LINUX=".*"|GRUB_CMDLINE_LINUX="root=ZFS=zfspool"|' /etc/default/grub
         sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard part_gpt nvme zfs zfscrypt zfsinfo"|' /etc/default/grub
+        echo 'export ZPOOL_VDEV_NAME_PATH=YES' >> /etc/profile.d/zpool_vdev_name_path.sh
+        source /etc/profile.d/zpool_vdev_name_path.sh
+        echo 'Defaults env_keep += "ZPOOL_VDEV_NAME_PATH"' >> /etc/sudoer
     else
         sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard part_gpt nvme"|' /etc/default/grub
     fi
