@@ -480,12 +480,14 @@ create_zfs() {
     -O primarycache=metadata -O redundant_metadata=most \
     -O relatime=off -O atime=off -O dnodesize=legacy -O normalization=formD \
     -O canmount=noauto -O mountpoint=/ -R /mnt rpool $root_drive
+    echo ">>> setting ZFS mountpoint"
+    zfs set mountpoint=/ rpool
+    echo ">>> setting ZFS pool as rootfs"
+    zpool set bootfs=rpool rpool
     echo ">>> mounting ZFS"
     mount_root
     echo ">>> checking ZFS pool"
     zpool status
-    echo ">>> setting ZFS"
-    zpool set bootfs=rpool rpool
     echo ">>> setting ZFS cache"
     zpool set cachefile=/etc/zfs/zpool.cache rpool
     rm /etc/zfs/zpool.cache
@@ -1079,7 +1081,7 @@ install_grub() {
     grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id="Arch Linux"
 
     if grep -q zfs /etc/fstab; then
-        sed -i 's|^GRUB_CMDLINE_LINUX=".*"|GRUB_CMDLINE_LINUX="root=zfs=rpool"|' /etc/default/grub
+        sed -i 's|^GRUB_CMDLINE_LINUX=".*"|GRUB_CMDLINE_LINUX=""|' /etc/default/grub
         sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard part_gpt nvme zfs zfscrypt zfsinfo"|' /etc/default/grub
         echo 'export ZPOOL_VDEV_NAME_PATH=YES' >> /etc/profile.d/zpool_vdev_name_path.sh
         source /etc/profile.d/zpool_vdev_name_path.sh
