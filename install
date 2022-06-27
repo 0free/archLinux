@@ -478,7 +478,7 @@ create_zfs() {
     -O acltype=posixacl -O aclinherit=passthrough -O xattr=sa -O overlay=on \
     -O primarycache=metadata -O redundant_metadata=most -O logbias=throughput \
     -O relatime=off -O atime=off -O dnodesize=auto -O normalization=formD \
-    -o canmount=noauto -o mountpoint=/ -R /mnt zfspool $root_drive
+    -O canmount=noauto -O mountpoint=/ -R /mnt zfspool $root_drive
     echo ">>> mounting ZFS"
     mount_root
     echo ">>> checking ZFS pool"
@@ -1058,9 +1058,6 @@ install_grub() {
     if grep -q zfs /etc/fstab; then
         sed -i 's|^GRUB_CMDLINE_LINUX=".*"|GRUB_CMDLINE_LINUX="root=ZFS=zfspool"|' /etc/default/grub
         sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard ohci uhci ehci part_gpt nvme zfs zfscrypt zfsinfo"|' /etc/default/grub
-        echo 'export ZPOOL_VDEV_NAME_PATH=YES' >> /etc/profile.d/zpool_vdev_name_path.sh
-        source /etc/profile.d/zpool_vdev_name_path.sh
-        echo 'Defaults env_keep += "ZPOOL_VDEV_NAME_PATH"' >> /etc/sudoers
     else
         sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard ohci uhci ehci part_gpt nvme"|' /etc/default/grub
     fi
