@@ -779,20 +779,6 @@ install_linux() {
     pacman -S --needed --noconfirm $list
 
     echo ">>> configuring mkinitcpio"
-    sed -i 's/block filesystems/block lvm2 filesystems/' /etc/mkinitcpio.conf
-
-    if grep -q btrfs /etc/fstab; then
-        MODULES+=' btrfs'
-    fi
-
-    if grep -q zfs /etc/fstab; then
-        if ! grep -q zfs /etc/mkinitcpio.conf; then
-            MODULES+=' zfs'
-            sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
-        fi
-    fi
-
-    MODULES+=' usbhid xhci_hcd'
 
     sed -i 's|^PRESETS=('default' 'fallback')|PRESETS=('default')|' /etc/mkinitcpio.d/linux-lts.preset
     sed -i 's|^PRESETS=('default' 'fallback')|PRESETS=('default')|' /etc/mkinitcpio.d/linux.preset
@@ -1060,8 +1046,23 @@ create_swap_file() {
 
 set_initcpio() {
 
-    echo ">>> building initial ramdisk"
+
+    if grep -q btrfs /etc/fstab; then
+        MODULES+=' btrfs'
+    fi
+
+    if grep -q zfs /etc/fstab; then
+        if ! grep -q zfs /etc/mkinitcpio.conf; then
+            MODULES+=' zfs'
+            sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
+        fi
+    fi
+
+    MODULES+=' usbhid xhci_hcd'
+
     sed -i "s|^MODULES=(.*)|MODULES=($MODULES)|" /etc/mkinitcpio.conf
+
+    echo ">>> building initial ramdisk"
     mkinitcpio -p linux-lts
     mkinitcpio -p linux
 
