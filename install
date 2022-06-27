@@ -756,7 +756,10 @@ setup_desktop() {
         create_swap_file
     fi
 
-    set_initcpio
+    if [[ ! -d /boot/grub/themes/grub-theme ]]; then
+        set_initcpio
+    fi
+
     install_grub
 
 }
