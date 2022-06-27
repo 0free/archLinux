@@ -1059,9 +1059,9 @@ install_grub() {
 
     if grep -q zfs /etc/fstab; then
         sed -i 's|^GRUB_CMDLINE_LINUX=".*"|GRUB_CMDLINE_LINUX="root=ZFS=zfspool"|' /etc/default/grub
-        sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard ohci uhci ehci part_gpt nvme zfs zfscrypt zfsinfo"|' /etc/default/grub
+        sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard part_gpt nvme zfs zfscrypt zfsinfo"|' /etc/default/grub
     else
-        sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard ohci uhci ehci part_gpt nvme"|' /etc/default/grub
+        sed -i 's|^GRUB_PRELOAD_MODULES=".*"|GRUB_PRELOAD_MODULES="usb usb_keyboard part_gpt nvme"|' /etc/default/grub
     fi
 
     if [[ -d /boot/grub/themes/starfield ]]; then
@@ -1080,7 +1080,7 @@ install_grub() {
     fi
 
     sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=1/' /etc/default/grub
-    sed -i 's/loglevel=3/loglevel=3/' /etc/default/grub
+    sed -i 's/loglevel=3/loglevel=0/' /etc/default/grub
     sed -i 's|#GRUB_BACKGROUND=".*"|GRUB_THEME="/boot/grub/themes/grub-theme/background.png"|' /etc/default/grub
     sed -i 's|#GRUB_THEME=".*"|GRUB_THEME="/boot/grub/themes/grub-theme/theme.txt"|' /etc/default/grub
 
