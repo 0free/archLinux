@@ -493,7 +493,6 @@ create_zfs() {
     mkdir -p /mnt/etc/zfs
     touch /mnt/etc/zfs/rpool.cache
     chmod a-w /mnt/etc/zfs/rpool.cache
-    chattr +i /mnt/etc/zfs/rpool.cache
     zpool set cachefile=/etc/zfs/rpool.cache rpool
     zfs set secondarycache=all rpool
     echo ">>> adding ZFS options"
