@@ -1025,6 +1025,7 @@ create_swap_file() {
 
 set_initcpio() {
 
+    echo ">>> configuring mkinitcpio"
     sed -i 's/block filesystems/block lvm2 filesystems/' /etc/mkinitcpio.conf
 
     if grep -q btrfs /etc/fstab; then
@@ -1040,7 +1041,10 @@ set_initcpio() {
 
     sed -i "s|^MODULES=(.*)|MODULES=($MODULES)|" /etc/mkinitcpio.conf
 
-    echo ">>> configuring initial ramdisk"
+    sed -i 's|^PRESETS=('default' 'fallback')|PRESETS=('default')|' /etc/mkinitcpio.d/linux-lts.preset
+    sed -i 's|^PRESETS=('default' 'fallback')|PRESETS=('default')|' /etc/mkinitcpio.d/linux.preset
+
+    echo ">>> building initial ramdisk"
     mkinitcpio -p linux-lts
     mkinitcpio -p linux
 
