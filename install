@@ -780,8 +780,8 @@ install_linux() {
 
     echo ">>> configuring mkinitcpio"
 
-    sed -i 's|^PRESETS=\('default' 'fallback'\)|PRESETS=\('default'\)|' /etc/mkinitcpio.d/linux-lts.preset
-    sed -i 's|^PRESETS=\('default' 'fallback'\)|PRESETS=\('default'\)|' /etc/mkinitcpio.d/linux.preset
+    sed -i 's|PRESETS=(.*)|PRESETS=('default')|' /etc/mkinitcpio.d/linux-lts.preset
+    sed -i 's|PRESETS=(.*)|PRESETS=('default')|' /etc/mkinitcpio.d/linux.preset
 
     if [[ -f /boot/initramfs-linux-lts-fallback.img ]]; then
         rm /boot/initramfs-linux-lts-fallback.img
@@ -1052,15 +1052,14 @@ set_initcpio() {
     fi
 
     if grep -q zfs /etc/fstab; then
-        if ! grep -q zfs /etc/mkinitcpio.conf; then
-            MODULES+=' zfs'
-            sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
-        fi
+        MODULES+=' zfs'
+        sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
     fi
 
     MODULES+=' usbhid xhci_hcd'
 
-    sed -i "s|^MODULES=\(.*\)|MODULES=\($MODULES\)|" /etc/mkinitcpio.conf
+    sort -u $MODULES | cat > $MODULES
+    sed -i "s|^MODULES=(.*)|MODULES=($MODULES)|" /etc/mkinitcpio.conf
 
     echo ">>> building initial ramdisk"
     mkinitcpio -p linux-lts
