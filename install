@@ -473,8 +473,8 @@ create_zfs() {
        create_rootfs
     fi
     echo ">>> creating ZFS pool"
-    zpool create -f -o ashift=12 -o autotrim=on \
-    -O recordsize=8192 -O compression=lz4 \
+    zpool create -f -o ashift=12 -O recordsize=8192 -O compression=lz4 \
+    -o autotrim=on -o exec=no \
     -O acltype=posixacl -O aclinherit=passthrough -O xattr=sa -O overlay=on \
     -O primarycache=metadata -O redundant_metadata=most -O logbias=throughput \
     -O relatime=off -O atime=off -O dnodesize=auto -O normalization=formD \
