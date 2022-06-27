@@ -483,19 +483,19 @@ create_zfs() {
     echo ">>> checking ZFS pool"
     zpool status
     echo ">>> creating ZFS dataset"
-    zpool create -O canmount=noauto -O mountpoint=/ rpool/root
+    zfs create -O canmount=noauto -O mountpoint=/ rpool/root
     zfs set mountpoint=/ rpool/root
     echo ">>> setting ZFS pool as rootfs"
     zpool set bootfs=rpool/root rpool
     echo ">>> mounting ZFS"
     mount_root
     echo ">>> setting ZFS cache"
-    zpool set cachefile=/etc/zfs/zpool.cache rpool
-    rm /etc/zfs/zpool.cache
+    zpool set cachefile=/etc/zfs/rpool.cache rpool
+    rm /etc/zfs/rpool.cache
     mkdir -p /mnt/etc/zfs
-    touch /mnt/etc/zfs/zpool.cache
-    chmod a-w /mnt/etc/zfs/zpool.cache
-    chattr +i /mnt/etc/zfs/zpool.cache
+    touch /mnt/etc/zfs/rpool.cache
+    chmod a-w /mnt/etc/zfs/rpool.cache
+    chattr +i /mnt/etc/zfs/rpool.cache
     zfs set secondarycache=all rpool
     echo ">>> adding ZFS options"
     echo "options zfs l2arc_noprefetch=0" >> /etc/modprobe.d/zfs.conf
