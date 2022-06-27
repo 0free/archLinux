@@ -776,20 +776,16 @@ setup_desktop() {
 
 install_linux() {
 
-    list='linux linux-lts linux-headers linux-lts-headers linux-firmware'
+    list='linux-lts linux-lts-headers linux-firmware'
     echo ">>> installing linux"
     pacman -S --needed --noconfirm $list
 
     echo ">>> configuring mkinitcpio"
 
-    sed -i 's|PRESETS=(.*)|PRESETS=('default')|' /etc/mkinitcpio.d/linux-lts.preset
-    sed -i 's|PRESETS=(.*)|PRESETS=('default')|' /etc/mkinitcpio.d/linux.preset
+    sed -i 's|PRESETS=(.*)|PRESETS=('default')|' /etc/mkinitcpio.d/*.preset
 
-    if [[ -f /boot/initramfs-linux-lts-fallback.img ]]; then
+    if [[ -f /boot/initramfs-*-fallback.img ]]; then
         rm /boot/initramfs-linux-lts-fallback.img
-    fi
-    if [[ -f /boot/initramfs-linux-fallback.img ]]; then
-        rm /boot/initramfs-linux-fallback.img
     fi
 
 }
@@ -1048,7 +1044,6 @@ create_swap_file() {
 
 set_initcpio() {
 
-
     if grep -q btrfs /etc/fstab; then
         MODULES+=(btrfs)
     fi
@@ -1070,8 +1065,7 @@ set_initcpio() {
     sed -i "s|^MODULES=(.*)|MODULES=($list)|" /etc/mkinitcpio.conf
 
     echo ">>> building initial ramdisk"
-    mkinitcpio -p linux-lts
-    mkinitcpio -p linux
+    mkinitcpio --allpresets
 
 }
 
