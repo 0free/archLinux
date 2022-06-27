@@ -720,33 +720,14 @@ setup_desktop() {
 
     install_linux
 
-    echo ">>> configuring mkinitcpio"
-    sed -i 's/block filesystems/block lvm2 filesystems/' /etc/mkinitcpio.conf
-
-    if grep -q btrfs /etc/fstab; then
-        MODULES+=' btrfs'
-    fi
-
-    if grep -q zfs /etc/fstab; then
-        if ! grep -q zfs /etc/mkinitcpio.conf; then
-            MODULES+=' zfs'
-            sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
-        fi
-    fi
-
-    sed -i "s|^MODULES=(.*)|MODULES=($MODULES)|" /etc/mkinitcpio.conf
-
-    sed -i 's|^PRESETS=('default' 'fallback')|PRESETS=('default')|' /etc/mkinitcpio.d/linux-lts.preset
-    sed -i 's|^PRESETS=('default' 'fallback')|PRESETS=('default')|' /etc/mkinitcpio.d/linux.preset
+    echo ">>> packages list"
+    packages_list
 
     if grep -q "#\[multilib\]" /etc/pacman.conf; then
         echo ">>> enabling multilib"
         sed -iz 's/\#\[multilib\]\n\#Include/\[multilib\]\nInclude/' /etc/pacman.conf
         sed -i ':a;N;s/\#\[multilib\]\n\#Include/\[multilib\]\nInclude/g;ba' /etc/pacman.conf
     fi
-
-    echo ">>> packages list"
-    packages_list
 
     update_packages
 
@@ -790,9 +771,28 @@ setup_desktop() {
 
 install_linux() {
 
-    list='linux linux-headers linux-firmware linux-lts linux-lts-headers'
+    list='linux linux-lts linux-headers linux-lts-headers linux-firmware'
     echo ">>> installing linux"
     pacman -S --needed --noconfirm $list
+
+    echo ">>> configuring mkinitcpio"
+    sed -i 's/block filesystems/block lvm2 filesystems/' /etc/mkinitcpio.conf
+
+    if grep -q btrfs /etc/fstab; then
+        MODULES+=' btrfs'
+    fi
+
+    if grep -q zfs /etc/fstab; then
+        if ! grep -q zfs /etc/mkinitcpio.conf; then
+            MODULES+=' zfs'
+            sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
+        fi
+    fi
+
+    MODULES+=' usbhid xhci_hcd'
+
+    sed -i 's|^PRESETS=('default' 'fallback')|PRESETS=('default')|' /etc/mkinitcpio.d/linux-lts.preset
+    sed -i 's|^PRESETS=('default' 'fallback')|PRESETS=('default')|' /etc/mkinitcpio.d/linux.preset
 
 }
 
@@ -1051,6 +1051,7 @@ create_swap_file() {
 set_initcpio() {
 
     echo ">>> building initial ramdisk"
+    sed -i "s|^MODULES=(.*)|MODULES=($MODULES)|" /etc/mkinitcpio.conf
     mkinitcpio -p linux-lts
     mkinitcpio -p linux
 
