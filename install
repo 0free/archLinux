@@ -756,10 +756,7 @@ setup_desktop() {
         create_swap_file
     fi
 
-    if [[ ! -d /boot/grub/themes/grub-theme ]]; then
-        set_initcpio
-    fi
-
+    set_initcpio
     install_grub
 
 }
@@ -1035,7 +1032,7 @@ set_initcpio() {
     fi
 
     if grep -q zfs /etc/fstab; then
-        if ! grep -q " zfs " /etc/mkinitcpio.conf; then
+        if ! grep -q zfs /etc/mkinitcpio.conf; then
             MODULES+=' zfs'
             sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
         fi
