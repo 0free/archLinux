@@ -1052,13 +1052,7 @@ set_initcpio() {
 install_grub() {
 
     echo ">>> installing grub bootloader"
-    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id="Arch Linux" --recheck
-
-    if [[ ! -d /boot/grub/locale ]]; then
-        mkdir /boot/grub/locale
-    fi
-
-    cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo
+    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id="Arch Linux"
 
     if grep -q zfs /etc/fstab; then
         sed -i 's|^GRUB_CMDLINE_LINUX=".*"|GRUB_CMDLINE_LINUX="root=ZFS=zfspool"|' /etc/default/grub
@@ -1078,9 +1072,9 @@ install_grub() {
         if [[ ! -d /grub-theme ]]; then
             echo ">>> cloning grub-theme"
             git clone https://github.com/0free/grub-theme.git
-            echo ">>> copying grub-theme"
         fi
         if [[ -d /grub-theme ]]; then
+            echo ">>> moving grub-theme"
             mv /grub-theme /boot/grub/themes/
         fi
     fi
