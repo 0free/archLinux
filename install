@@ -490,35 +490,33 @@ create_zfs() {
     echo ">>> mounting ZFS"
     mount_root
     echo ">>> setting ZFS cache"
-    zpool set cachefile=/etc/zfs/rpool.cache rpool
-    rm /etc/zfs/rpool.cache
     mkdir -p /mnt/etc/zfs
     touch /mnt/etc/zfs/rpool.cache
     chmod a-w /mnt/etc/zfs/rpool.cache
     chattr +i /mnt/etc/zfs/rpool.cache
+    zpool set cachefile=/etc/zfs/rpool.cache rpool
     zfs set secondarycache=all rpool
     echo ">>> adding ZFS options"
-    echo "options zfs l2arc_noprefetch=0" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs l2arc_write_max=536870912" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs l2arc_write_boost=1073741824" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs l2arc_headroom=12" >> /etc/modprobe.d/zfs.conf
-    echo "options scsi_mod scan=sync" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs zfs_arc_max=536870912" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs zfs_arc_min=268435456" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs zfs_prefetch_disable=0" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs zfs_top_maxinflight=320" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs zfs_txg_timeout=15" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs zfs_vdev_scheduler=deadline" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs zfs_vdev_async_read_min_active=8" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs zfs_vdev_async_read_max_active=32" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs zfs_vdev_async_write_min_active=8" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs zfs_vdev_async_write_max_active=32" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs zfs_vdev_sync_write_min_active=8" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs zfs_vdev_sync_write_max_active=32" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs zfs_vdev_sync_read_min_active=8" >> /etc/modprobe.d/zfs.conf
-    echo "options zfs zfs_vdev_sync_read_max_active=32" >> /etc/modprobe.d/zfs.conf
-    mkdir -p /mnt/etc/modprobe.d
-    mv /etc/modprobe.d/zfs.conf /mnt/etc/modprobe.d/zfs.conf
+    mkdir -p /mnt/etc/modprobe.d/
+    echo "options zfs l2arc_noprefetch=0" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs l2arc_write_max=536870912" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs l2arc_write_boost=1073741824" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs l2arc_headroom=12" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options scsi_mod scan=sync" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_arc_max=536870912" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_arc_min=268435456" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_prefetch_disable=0" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_top_maxinflight=320" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_txg_timeout=15" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_scheduler=deadline" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_async_read_min_active=8" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_async_read_max_active=32" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_async_write_min_active=8" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_async_write_max_active=32" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_sync_write_min_active=8" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_sync_write_max_active=32" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_sync_read_min_active=8" >> /mnt/etc/modprobe.d/zfs.conf
+    echo "options zfs zfs_vdev_sync_read_max_active=32" >> /mnt/etc/modprobe.d/zfs.conf
 
 }
 
