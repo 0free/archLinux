@@ -807,13 +807,13 @@ install_packages() {
 
     # intel GPU
     list+=' xf86-video-intel vulkan-intel'
-    MODULES+=' i915 intel_agp'
+    MODULES+=(i915 intel_agp)
     # nvidia GPU
     list+=' nvidia-open-dkms'
-    MODULES+=' nvidia nvidia_modeset nvidia_uvm nvidia_drm'
+    MODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
     # amd GPU
     list+=' xf86-video-amdgpu mesa amdvlk vulkan-radeon vulkan-mesa-layers'
-    MODULES+=' amdgpu'
+    MODULES+=(amdgpu)
 
     echo ">>> installing packages"
     pacman -S --needed --noconfirm $list
@@ -1048,18 +1048,24 @@ set_initcpio() {
 
 
     if grep -q btrfs /etc/fstab; then
-        MODULES+=' btrfs'
+        MODULES+=(btrfs)
     fi
 
     if grep -q zfs /etc/fstab; then
-        MODULES+=' zfs'
+        MODULES+=(zfs)
         sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
     fi
 
-    MODULES+=' usbhid xhci_hcd'
+    MODULES+=(usbhid xhci_hcd)
 
-    $MODULES=$(cat $MODULES | sort -u)
-    sed -i "s|^MODULES=(.*)|MODULES=($MODULES)|" /etc/mkinitcpio.conf
+    list=''
+    for i in ${!MODULES[@]}; do
+        list+=${MODULES[$i]}
+        list+=' '
+    done
+
+
+    sed -i "s|^MODULES=(.*)|MODULES=($list)|" /etc/mkinitcpio.conf
 
     echo ">>> building initial ramdisk"
     mkinitcpio -p linux-lts
