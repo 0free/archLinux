@@ -51,6 +51,9 @@ packages_list() {
     fi
 
     if grep -q btrfs /etc/fstab; then
+        PACKAGES+=(
+            grub-btrfs
+        )
         AUR_PACKAGE+=(
             btrfs-assistant
         )
