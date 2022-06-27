@@ -1052,7 +1052,7 @@ set_initcpio() {
 install_grub() {
 
     echo ">>> installing grub bootloader"
-    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=linux --recheck
+    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id="Arch Linux" --recheck
 
     if [[ ! -d /boot/grub/locale ]]; then
         mkdir /boot/grub/locale
