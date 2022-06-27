@@ -1097,12 +1097,9 @@ install_grub() {
 
     if [[ ! -d /boot/grub/themes/grub-theme ]]; then
         echo ">>> cloning grub-theme"
+        cd /boot/grub/themes/
         git clone https://github.com/0free/grub-theme.git
-    fi
-
-    if [[ -d /root/grub-theme ]]; then
-            echo ">>> moving grub-theme"
-            mv /root/grub-theme /boot/grub/themes/
+        cd /root
     fi
 
     sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=1/' /etc/default/grub
