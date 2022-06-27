@@ -884,12 +884,16 @@ clean_packages() {
 enable_services() {
 
     echo ">>> enabling services"
-    systemctl enable gdm
+
     systemctl enable NetworkManager
     systemctl enable systemd-networkd
     systemctl enable systemd-resolved
     systemctl enable ufw
     systemctl enable bluetooth
+
+    if [[ $desktop == "gnome" ]]; then
+        systemctl enable gdm
+    fi
 
     if [[ $computer == "workstation" ]]; then
         systemctl enable cups
