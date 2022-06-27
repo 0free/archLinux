@@ -755,7 +755,6 @@ setup_desktop() {
     fi
 
     set_initcpio
-    remove_files
     install_grub
 
 }
@@ -1042,17 +1041,6 @@ set_initcpio() {
     echo ">>> configuring initial ramdisk"
     mkinitcpio -p linux
     mkinitcpio -p linux-lts
-
-}
-
-remove_files() {
-
-    if [[ -f /root/desktop ]]; then
-        rm /root/desktop
-    fi
-    if [[ -f /root/aur ]]; then
-        rm /root/aur
-    fi
 
 }
 
