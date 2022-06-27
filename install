@@ -9,8 +9,6 @@ keymaps=(us)
 packages_list() {
 
     PACKAGES+=(
-        # linux
-        linux linux-headers linux-firmware linux-lts linux-lts-headers
         # micro-codes
         amd-ucode intel-ucode
         # dkms
@@ -712,6 +710,16 @@ set_locale() {
 
 setup_desktop() {
 
+    if [[ -f /boot/amd-ucode.img ]]; then
+        rm /boot/amd-ucode.img
+    fi
+
+    if [[ -f /boot/intel-ucode.img ]]; then
+        rm /boot/intel-ucode.img
+    fi
+
+    install_linux
+
     echo ">>> configuring mkinitcpio"
     sed -i 's/block filesystems/block lvm2 filesystems/' /etc/mkinitcpio.conf
 
@@ -731,16 +739,16 @@ setup_desktop() {
     sed -i 's|^PRESETS=('default' 'fallback')|PRESETS=('default')|' /etc/mkinitcpio.d/linux-lts.preset
     sed -i 's|^PRESETS=('default' 'fallback')|PRESETS=('default')|' /etc/mkinitcpio.d/linux.preset
 
-    if [[ -f /boot/amd-ucode.img ]]; then
-        rm /boot/amd-ucode.img
-    fi
-
-    if [[ -f /boot/intel-ucode.img ]]; then
-        rm /boot/intel-ucode.img
+    if grep -q "#\[multilib\]" /etc/pacman.conf; then
+        echo ">>> enabling multilib"
+        sed -iz 's/\#\[multilib\]\n\#Include/\[multilib\]\nInclude/' /etc/pacman.conf
+        sed -i ':a;N;s/\#\[multilib\]\n\#Include/\[multilib\]\nInclude/g;ba' /etc/pacman.conf
     fi
 
     echo ">>> packages list"
     packages_list
+
+    update_packages
 
     install_packages
 
@@ -780,15 +788,15 @@ setup_desktop() {
 
 }
 
+install_linux() {
+
+    list='linux linux-headers linux-firmware linux-lts linux-lts-headers'
+    echo ">>> installing linux"
+    pacman -S --needed --noconfirm $list
+
+}
+
 install_packages() {
-
-    if grep -q "#\[multilib\]" /etc/pacman.conf; then
-        echo ">>> enabling multilib"
-        sed -iz 's/\#\[multilib\]\n\#Include/\[multilib\]\nInclude/' /etc/pacman.conf
-        sed -i ':a;N;s/\#\[multilib\]\n\#Include/\[multilib\]\nInclude/g;ba' /etc/pacman.conf
-    fi
-
-    update_packages
 
     list=''
 
@@ -797,7 +805,6 @@ install_packages() {
         list+=${PACKAGES[$i]}
     done
 
-    # fielsystem
     if grep -q btrfs /etc/fstab; then
         list+=' grub-btrfs'
     fi
@@ -812,7 +819,6 @@ install_packages() {
     list+=' xf86-video-amdgpu mesa amdvlk vulkan-radeon vulkan-mesa-layers'
     MODULES+=' amdgpu'
 
-    # install all packages
     echo ">>> installing packages"
     pacman -S --needed --noconfirm $list
 
