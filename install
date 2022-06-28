@@ -492,7 +492,7 @@ create_zfs() {
     -O devices=off -O xattr=sa -O overlay=on -O logbias=throughput \
     -O primarycache=metadata -O redundant_metadata=most \
     -O relatime=off -O atime=off -O dnodesize=legacy -O normalization=formD \
-    -O canmount=auto -O mountpoint=/ -R /mnt rpool $root_drive
+    -O canmount=off -O mountpoint=/ -R /mnt rpool $root_drive
     echo ">>> checking ZFS pool"
     zpool status
     echo ">>> setting ZFS pool as rootfs"
