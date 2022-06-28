@@ -1171,7 +1171,7 @@ finish() {
     commands+='reboot'
 
     for command in ${commands[@]}; do
-        eval $command
+        echo $(eval $command)
     done
 
 }
