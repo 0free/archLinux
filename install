@@ -1106,7 +1106,7 @@ install_bootloader() {
     echo "initrd /initramfs-linux-lts.img" >> /boot/loader/entries/boot.conf
 
     if [[ $filesystem == 'zfs' ]]; then
-        echo "options root=zfs=rpool rw" >> /boot/loader/entries/boot.conf
+        echo "options root=ZFS=rpool rw" >> /boot/loader/entries/boot.conf
     else
         echo "options root=$root_drive rw" >> /boot/loader/entries/boot.conf
     fi
