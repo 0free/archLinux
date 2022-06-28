@@ -497,7 +497,7 @@ set_zfs() {
     echo ">>> setting ZFS cache"
     zpool set cachefile=/etc/zfs/rpool.cache rpool
     mkdir -p /mnt/etc/zfs
-    cp /etc/zfs/rpool.cache /mnt/etc/zfs/
+    cp /etc/zfs/rpool.cache /mnt/etc/zfs/rpool.cache
     echo ">>> adding ZFS options"
     mkdir -p /mnt/etc/modprobe.d/
     echo "options zfs l2arc_noprefetch=0" >> /mnt/etc/modprobe.d/zfs.conf
@@ -808,13 +808,11 @@ install_packages() {
 
     # intel GPU
     list+=' xf86-video-intel vulkan-intel'
-    MODULES+=(i915 intel_agp)
     # nvidia GPU
     list+=' nvidia-open-dkms'
-    MODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
     # amd GPU
     list+=' xf86-video-amdgpu mesa amdvlk vulkan-radeon vulkan-mesa-layers'
-    MODULES+=(amdgpu)
+
 
     echo ">>> installing packages"
     pacman -S --needed --noconfirm $list
@@ -1057,13 +1055,15 @@ set_initcpio() {
     fi
 
     MODULES+=(usbhid xhci_hcd)
+    MODULES+=(i915 intel_agp)
+    MODULES+=(amdgpu)
+    MODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
 
     list=''
     for i in ${!MODULES[@]}; do
         list+=${MODULES[$i]}
         list+=' '
     done
-
 
     sed -i "s|^MODULES=(.*)|MODULES=($list)|" /etc/mkinitcpio.conf
 
