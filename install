@@ -1159,13 +1159,13 @@ finish() {
     commands+='exit'
     commands+='exit'
 
+    if mountpoint -q /mnt; then
+        commands+='umount -l /mnt'
+    fi
+
     if [[ $filesystem == 'zfs' ]]; then
         commands+='zfs umount -a'
         commands+='zpool export rpool'
-    fi
-
-    if mountpoint -q /mnt; then
-        commands+='umount -R /mnt'
     fi
 
     commands+='reboot'
