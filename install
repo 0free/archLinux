@@ -59,7 +59,7 @@ packages_list() {
         )
     fi
 
-    if [[ $desktop == "gnome" ]]; then
+    if [[ $desktop == 'gnome' ]]; then
 
         PACKAGES+=(
             # gnome session
@@ -72,7 +72,7 @@ packages_list() {
 
     fi
 
-    if [[ $desktop == "kde" ]]; then
+    if [[ $desktop == 'kde' ]]; then
 
         PACKAGES+=(
             # kde session
@@ -89,9 +89,9 @@ packages_list() {
 
     fi
 
-    if [[ $computer == "workstation" ]]; then
+    if [[ $computer == 'workstation' ]]; then
 
-        if [[ $desktop == "gnome" ]]; then
+        if [[ $desktop == 'gnome' ]]; then
             packages+=(
                 # gnome extra
                 gnome-software gnome-photos gnome-music gnome-clocks gnome-contacts gnome-calculator gnome-maps gnome-logs gnome-remote-desktop gnome-screenshot gnome-boxes gnome-calendar gnome-power-manager gnome-sound-recorder gnome-font-viewer gnome-color-manager fragments gnome-subtitles gnome-connections gnome-recipes gnome-notes gnome-dictionary gnome-multi-writer gnome-bluetooth-3.0 gnome-podcasts gnome-characters gnome-code-assistance gnome-builder ghex baobab
@@ -112,7 +112,7 @@ packages_list() {
             )
         fi
 
-        if [[ $desktop == "kde" ]]; then
+        if [[ $desktop == 'kde' ]]; then
             packages+=(
                 # kde app
                 kmix kmail kdenlive ktorrent kdeconnect kamera kamoso okular spectacle partitionmanager akregator okteta kjots
@@ -323,7 +323,7 @@ packages_list() {
 
     fi
 
-    if [[ $computer == "server" ]]; then
+    if [[ $computer == 'server' ]]; then
 
         PACKAGES+=(
             # SSL/TLS
@@ -349,7 +349,7 @@ packages_list() {
 
     fi
 
-    if [[ $computer == "miner" ]]; then
+    if [[ $computer == 'miner' ]]; then
         AUR_PACKAGE+=(
             # browser
             google-chrome
@@ -419,6 +419,9 @@ setup_drive() {
     filesystems=(btrfs ext4 xfs zfs)
     menu "select a filesystem" filesystem ${filesystems[@]}
 
+    bootloaders=(systemd-boot grub)
+    menu "select a bootloader" bootloader ${bootloaders[@]}
+
     computers=(minimal miner server workstation)
     menu "select a computer" computer ${computers[@]}
 
@@ -436,7 +439,7 @@ setup_drive() {
         echo ">>> creating boot partition"
         sgdisk -n 1:0:+"$bootsize"M -c 1:BOOT -t 1:ef00 $drive
         echo ">>> creating root partition"
-        if [[ $filesystem == "zfs" ]]; then
+        if [[ $filesystem == 'zfs' ]]; then
             sgdisk -n 2:0:0 -c 2:ROOT -t 2:bf00 $drive
         else
             sgdisk -n 2:0:0 -c 2:ROOT -t 2:8300 $drive
@@ -448,20 +451,20 @@ setup_drive() {
     fi
 
     echo ">>> creating root filesystem"
-    if [[ $filesystem == "zfs" ]]; then
+    if [[ $filesystem == 'zfs' ]]; then
         create_zfs
-    elif [[ $filesystem == "btrfs" ]]; then
+    elif [[ $filesystem == 'btrfs' ]]; then
         mkfs.btrfs -f -L ROOT $root_drive
-    elif [[ $filesystem == "ext4" ]]; then
+    elif [[ $filesystem == 'btrfsext4' ]]; then
         mkfs.ext4 -f -L ROOT $root_drive
-    elif [[ $filesystem == "xfs" ]]; then
+    elif [[ $filesystem == 'xfs' ]]; then
         mkfs.xfs -f -L ROOT $root_drive
     fi
 
     mount_root
     mount_boot
 
-    if [[ $filesystem == "zfs" ]]; then
+    if [[ $filesystem == 'zfs' ]]; then
         set_zfs
     fi
 
@@ -528,7 +531,7 @@ set_zfs() {
 mount_root() {
 
     echo ">>> mounting root drive"
-    if [[ $filesystem == "zfs" ]]; then
+    if [[ $filesystem == 'zfs' ]]; then
         echo ">>> exporting ZFS"
         zpool export rpool
         echo ">>> importing ZFS"
@@ -744,17 +747,17 @@ setup_desktop() {
 
     faillock --user $USER --reset
 
-    if [[ $aur_installer == "makepkg" ]]; then
+    if [[ $aur_installer == 'makepkg' ]]; then
         install_makepkg
     elif ! command -v $aur_installer; then
         echo ">>> installing $aur_installer"
-        if [[ $aur_installer == "aura" ]]; then
+        if [[ $aur_installer == 'aura' ]]; then
             aur_installer='aura-bin'
-        elif [[ $aur_installer == "paru" ]]; then
+        elif [[ $aur_installer == 'paru' ]]; then
             aur_installer='paru-bin'
-        elif [[ $aur_installer == "pikaur" ]]; then
+        elif [[ $aur_installer == 'pikaur' ]]; then
             aur_installer='pikaur'
-        elif [[ $aur_installer == "yay" ]]; then
+        elif [[ $aur_installer == 'yay' ]]; then
             aur_installer='yay-bin'
         fi
         install_aur
@@ -805,7 +808,9 @@ install_packages() {
     done
 
     if grep -q btrfs /etc/fstab; then
-        list+=' grub-btrfs'
+        if [[ $bootloader == 'grub' ]]; then
+            list+=' grub-btrfs'
+        fi
     fi
 
     # intel GPU
@@ -874,16 +879,16 @@ install_aur_packages() {
         list+=${AUR_PACKAGE[$i]}
     done
     faillock --user $USER --reset
-    if [[ $aur_installer == "aura" ]]; then
+    if [[ $aur_installer == 'aura' ]]; then
         sudo aura -Ac --builduser=$USER --skipinteg --skippgpcheck --quiet --devel --noconfirm $list
     fi
-    if [[ $aur_installer == "paru" ]]; then
+    if [[ $aur_installer == 'paru' ]]; then
         sudo -u $USER paru -S --needed --noconfirm $list
     fi
-    if [[ $aur_installer == "pikaur" ]]; then
+    if [[ $aur_installer == 'pikaur' ]]; then
         sudo -u $USER pikaur -S --needed --noconfirm $list
     fi
-    if [[ $aur_installer == "yay" ]]; then
+    if [[ $aur_installer == 'yay' ]]; then
         sudo -u $USER yay -S --needed --noconfirm --batchinstall --answerclean None --answerdiff None --nocleanmenu --nodiffmenu --noeditmenu --noupgrademenu --removemake --noredownload --noprovides --norebuild --sudoloop --mflags "--needed --noconfirm" $list
     fi
 
@@ -893,13 +898,13 @@ clean_packages() {
 
     echo ">>> cleaning packages"
     pacman -Scc --noconfirm
-    if [[ $aur_installer == "aura" ]]; then
+    if [[ $aur_installer == 'aura' ]]; then
         sudo aura -Auac --builduser --noconfirm
-    elif [[ $aur_installer == "paru" ]]; then
+    elif [[ $aur_installer == 'paru' ]]; then
         sudo -u $USER paru -Sc --noconfirm
-    elif [[ $aur_installer == "pikaur" ]]; then
+    elif [[ $aur_installer == 'pikaur' ]]; then
         sudo -u $USER pikaur -Scc --noconfirm
-    elif [[ $aur_installer == "yay" ]]; then
+    elif [[ $aur_installer == 'yay' ]]; then
         sudo -u $USER yay -Yc && sudo -u $USER yay -Scc
     fi
 
@@ -915,19 +920,19 @@ enable_services() {
     systemctl enable ufw
     systemctl enable bluetooth
 
-    if [[ $desktop == "gnome" ]]; then
+    if [[ $desktop == 'gnome' ]]; then
         systemctl enable gdm
     fi
 
-    if [[ $desktop == "kde" ]]; then
+    if [[ $desktop == 'kde' ]]; then
         systemctl enable sddm
     fi
 
-    if [[ $computer == "workstation" ]]; then
+    if [[ $computer == 'workstation' ]]; then
         systemctl enable cups
     fi
 
-    if [[ $computer == "server" ]]; then
+    if [[ $computer == 'server' ]]; then
         systemctl enable mariadb
         systemctl enable mysql
         systemctl enable mysqld
@@ -965,48 +970,48 @@ add_commands() {
 
     echo "alis youtube='yt-dlp -o \"~/%(title)s.%(ext)s\" -f \"bv[vcodec~=\"^((he|a)vc|h26[45])\"][height<=1080][fps<=60]+ba\" --merge-output-format mp4 --downloader ffmpeg --external-downloader ffmpeg --external-downloader-args ffmpeg:\"-ss 00:00:00 -to 00:00:00\"'" >> /home/$USER/.bashrc
 
-    if [[ $aur_installer == "makepkg" ]]; then
+    if [[ $aur_installer == 'makepkg' ]]; then
         echo "alias update='sudo pacman -Syu --needed --noconfirm'" >> /home/$USER/.bashrc
         echo -e "alias aur='\ncd ~\ngit clone https://aur.archlinux.org/$2.git || cd ~/$2\ncd ~/$2\nmakepkg -sic --needed --noconfirm\nrm -r ~/$2 && cd ~\n'" >> /home/$USER/.bashrc
         echo "alias clean='sudo pacman -Scc --noconfirm && makepkg -rc --noconfirm'" >> /home/$USER/.bashrc
     fi
 
-    if [[ $aur_installer == "aura" ]]; then
+    if [[ $aur_installer == 'aura' ]]; then
         echo "alias update='sudo pacman -Syu --needed --noconfirm && sudo aura -Auac --devel --noconfirm'" >> /home/$USER/.bashrc
         echo "alias aur='sudo aura -Auc --needed --noconfirm'" >> /home/$USER/.bashrc
         echo "alias remove-aur='aura -R --noconfirm'" >> /home/$USER/.bashrc
         echo "alias clean='sudo pacman -Scc --noconfirm && aura -Ac --noconfirm'" >> /home/$USER/.bashrc
     fi
 
-    if [[ $aur_installer == "paru" ]]; then
+    if [[ $aur_installer == 'paru' ]]; then
         echo "alias update='sudo pacman -Syu --needed --noconfirm && paru -Sua --needed --noconfirm'" >> /home/$USER/.bashrc
         echo "alias aur='paru -S --needed --noconfirm'" >> /home/$USER/.bashrc
         echo "alias remove-aur='paru -R --noconfirm'" >> /home/$USER/.bashrc
         echo "alias clean='sudo pacman -Scc --noconfirm && paru -Sc --noconfirm'" >> /home/$USER/.bashrc
     fi
 
-    if [[ $aur_installer == "pikaur" ]]; then
+    if [[ $aur_installer == 'pikaur' ]]; then
         echo "alias update='sudo pacman -Syu --needed --noconfirm && pikaur -Syu'" >> /home/$USER/.bashrc
         echo "alias aur='pikaur -S --needed --noconfirm'" >> /home/$USER/.bashrc
         echo "alias remove-aur='pikaur -R --noconfirm'" >> /home/$USER/.bashrc
         echo "alias clean='sudo pacman -Scc --noconfirm && pikaur -Scc --noconfirm'" >> /home/$USER/.bashrc
     fi
 
-    if [[ $aur_installer == "yay" ]]; then
+    if [[ $aur_installer == 'yay' ]]; then
         echo "alias update='sudo pacman -Syu --needed --noconfirm && yay -Syu --needed --noconfirm'" >> /home/$USER/.bashrc
         echo "alias aur='yay -S --needed --noconfirm --batchinstall --answerclean None --answerdiff None --nocleanmenu --nodiffmenu --noeditmenu --noupgrademenu --removemake --noredownload --noprovides --norebuild --sudoloop --mflags \"--noconfirm\"'" >> /home/$USER/.bashrc
         echo "alias remove-aur='yay -R --noconfirm'" >> /home/$USER/.bashrc
         echo "alias clean='sudo pacman -Scc --noconfirm && yay -Yc --mflags \"--noconfirm\" && yay -Scc --mflags \"--noconfirm\"'" >> /home/$USER/.bashrc
     fi
 
-    if [[ $computer == "server" ]]; then
+    if [[ $computer == 'server' ]]; then
         echo "alias blacklist='sh ~/blacklist.sh'" >> /home/$USER/.bashrc
         echo "alias lsws-log='sudo rm /opt/lsws/logs/*'" >> /home/$USER/.bashrc
         echo "alias clog='sudo rm /var/log/*log*'" >> /home/$USER/.bashrc
         echo "alias mysql='mysql -u root -p'" >> /home/$USER/.bashrc
     fi
 
-    if [[ $computer == "miner" ]]; then
+    if [[ $computer == 'miner' ]]; then
         echo "alias trex='t-rex -c ~/config.json'" >> /home/$USER/.bashrc
         echo -e "#!/bin/bash\n\nt-rex -c ~/config.json" > /etc/init.d/startup.sh
         chmod +x /etc/init.d/startup.sh
@@ -1122,7 +1127,7 @@ finish() {
     if mountpoint -q /mnt; then
         command+='umount -R /mnt'
     fi
-    if [[ $filesystem == "zfs" ]]; then
+    if [[ $filesystem == 'zfs' ]]; then
         command+='zfs umount -a'
         command+='zpool export rpool'
     fi
