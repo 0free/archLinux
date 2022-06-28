@@ -14,7 +14,7 @@ packages_list() {
         # dkms
         dkms
         # efi boot
-        efibootmgr grub grub-customizer
+        efibootmgr
         # utilities
         bash-completion sudo fakeroot syslog-ng dialog unrar unzip wget zip git reflector
         # spell check
@@ -39,6 +39,20 @@ packages_list() {
         archlinux-keyring
     )
 
+    if [[ $bootloader == 'grub' ]]; then
+        PACKAGES+=(
+            grub grub-customizer
+        )
+        if grep -q btrfs /etc/fstab; then
+            PACKAGES+=(
+                grub-btrfs
+            )
+            AUR_PACKAGE+=(
+                btrfs-assistant
+            )
+        fi
+    fi
+
     AUR_PACKAGE+=(
         # browser
         google-chrome
@@ -47,15 +61,6 @@ packages_list() {
     if grep -q zfs /etc/fstab; then
         AUR_PACKAGE+=(
             zfs-utils zfs-dkms
-        )
-    fi
-
-    if grep -q btrfs /etc/fstab; then
-        PACKAGES+=(
-            grub-btrfs
-        )
-        AUR_PACKAGE+=(
-            btrfs-assistant
         )
     fi
 
@@ -777,7 +782,15 @@ setup_desktop() {
     fi
 
     set_initcpio
-    install_grub
+
+    if [[ $bootloader == 'systemd-boot' ]]; then
+        install_bootloader
+    fi
+
+    if [[ $bootloader == 'grub' ]]; then
+        install_grub
+    fi
+
     finish
 
 }
@@ -1079,6 +1092,18 @@ set_initcpio() {
 
 }
 
+install_bootloader() {
+
+    bootctl --path=/boot install
+    sed -i 's|#timeout 3|timeout 1|' /boot/loader/loader.conf
+    sed -i 's|default .*|default boot-*|' /boot/loader/loader.conf
+    echo "title Arch Linux" >> /boot/loader/entries/boot.conf
+    echo "linux /vmlinuz-linux" >> /boot/loader/entries/boot.conf
+    echo "initrd /initramfs-linux-lts.img" >> /boot/loader/entries/boot.conf
+    echo "options root=$root_drive rw" >> /boot/loader/entries/boot.conf
+
+}
+
 install_grub() {
 
     echo ">>> installing grub bootloader"
@@ -1151,6 +1176,7 @@ if [[ -f /root/chroot ]]; then
             setup_desktop
         else
             if mountpoint -q /boot; then
+                
                 install_grub
             fi
         fi
