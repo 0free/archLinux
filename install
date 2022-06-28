@@ -1170,8 +1170,6 @@ finish() {
         $($command)
     done
 
-    rm -r /root/*
-
 }
 
 clear && set -e
