@@ -735,6 +735,15 @@ setup_desktop() {
         rm /boot/intel-ucode.img
     fi
 
+    if ! command -v reflector; then
+        echo ">>> installing reflector"
+        pacman -S --needed --noconfirm reflector
+        echo "--save /etc/pacman.d/mirrorlist" >> /etc/xdg/reflector/reflector.conf
+        echo "--country Singapore,Germany" >> /etc/xdg/reflector/reflector.conf
+        echo "--protocol rsync" >> /etc/xdg/reflector/reflector.conf
+        echo "--latest 5" >> /etc/xdg/reflector/reflector.conf
+    fi
+
     install_linux
 
     echo ">>> packages list"
@@ -743,15 +752,6 @@ setup_desktop() {
     if grep -q "#\[multilib\]" /etc/pacman.conf; then
         echo ">>> enabling multilib"
         sed -iz 's/\#\[multilib\]\n\#Include/\[multilib\]\nInclude/' /etc/pacman.conf
-    fi
-
-    if ! command -v reflector; then
-        echo ">>> installing reflector"
-        pacman -S --needed --noconfirm reflector
-        echo "--save /etc/pacman.d/mirrorlist" >> /etc/xdg/reflector/reflector.conf
-        echo "--country Singapore,Germany" >> /etc/xdg/reflector/reflector.conf
-        echo "--protocol rsync" >> /etc/xdg/reflector/reflector.conf
-        echo "--latest 5" >> /etc/xdg/reflector/reflector.conf
     fi
 
     update_packages
