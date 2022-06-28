@@ -533,8 +533,8 @@ mount_root() {
         zpool export rpool
         echo ">>> importing ZFS"
         zpool import rpool -d $root_drive -R /mnt -N
-        echo ">>> mounting any ZFS datasets"
-        zfs mount rpool
+        echo ">>> mounting ZFS dataset"
+        zfs mount rpool/root
     else
         mount $root_drive /mnt
     fi
