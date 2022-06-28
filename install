@@ -495,11 +495,9 @@ create_zfs() {
 set_zfs() {
 
     echo ">>> setting ZFS cache"
-    mkdir -p /mnt/etc/zfs
-    touch /mnt/etc/zfs/rpool.cache
-    chmod a-w /mnt/etc/zfs/rpool.cache
     zpool set cachefile=/etc/zfs/rpool.cache rpool
-    zfs set secondarycache=all rpool
+    mkdir -p /mnt/etc/zfs
+    cp /etc/zfs/rpool.cache /mnt/etc/zfs/
     echo ">>> adding ZFS options"
     mkdir -p /mnt/etc/modprobe.d/
     echo "options zfs l2arc_noprefetch=0" >> /mnt/etc/modprobe.d/zfs.conf
