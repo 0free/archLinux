@@ -1097,6 +1097,7 @@ install_bootloader() {
     bootctl --path=/boot install
     sed -i 's|#timeout 3|timeout 1|' /boot/loader/loader.conf
     sed -i 's|default .*|default boot-*|' /boot/loader/loader.conf
+    echo "default boot-*" >> /boot/loader/loader.conf
     echo "title Arch Linux" >> /boot/loader/entries/boot.conf
     echo "linux /vmlinuz-linux" >> /boot/loader/entries/boot.conf
     echo "initrd /initramfs-linux-lts.img" >> /boot/loader/entries/boot.conf
@@ -1146,7 +1147,7 @@ install_grub() {
 
 finish() {
 
-    #rm -r /root/*
+    echo ">>> rebooting"
     commands+='exit'
     commands+='exit'
     if mountpoint -q /mnt; then
@@ -1159,8 +1160,10 @@ finish() {
     commands+='reboot'
 
     for command in ${commands[@]}; do
-        $("$command")
+        $($command)
     done
+
+    rm -r /root/*
 
 }
 
