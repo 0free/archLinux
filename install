@@ -727,14 +727,6 @@ set_locale() {
 
 setup_desktop() {
 
-    if [[ -f /boot/amd-ucode.img ]]; then
-        rm /boot/amd-ucode.img
-    fi
-
-    if [[ -f /boot/intel-ucode.img ]]; then
-        rm /boot/intel-ucode.img
-    fi
-
     if ! command -v reflector; then
         echo ">>> installing reflector"
         pacman -S --needed --noconfirm reflector
