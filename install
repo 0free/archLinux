@@ -1166,17 +1166,20 @@ finish() {
     echo ">>> rebooting"
     commands+='exit'
     commands+='exit'
-    if mountpoint -q /mnt; then
-        commands+='umount -R /mnt'
-    fi
+
     if [[ $filesystem == 'zfs' ]]; then
         commands+='zfs umount -a'
         commands+='zpool export rpool'
     fi
+
+    if mountpoint -q /mnt; then
+        commands+='umount -R /mnt'
+    fi
+
     commands+='reboot'
 
     for command in ${commands[@]}; do
-        $($command)
+        eval $command
     done
 
 }
