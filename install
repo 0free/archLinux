@@ -455,7 +455,7 @@ setup_drive() {
         create_zfs
     elif [[ $filesystem == 'btrfs' ]]; then
         mkfs.btrfs -f -L ROOT $root_drive
-    elif [[ $filesystem == 'btrfsext4' ]]; then
+    elif [[ $filesystem == 'ext4' ]]; then
         mkfs.ext4 -f -L ROOT $root_drive
     elif [[ $filesystem == 'xfs' ]]; then
         mkfs.xfs -f -L ROOT $root_drive
