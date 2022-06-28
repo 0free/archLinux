@@ -460,6 +460,11 @@ setup_drive() {
 
     mount_root
     mount_boot
+
+    if [[ $filesystem == "zfs" ]]; then
+        set_zfs
+    fi
+
     install_base
 
 }
@@ -485,8 +490,11 @@ create_zfs() {
     zfs set mountpoint=/ rpool
     echo ">>> setting ZFS pool as rootfs"
     zpool set bootfs=rpool rpool
-    echo ">>> mounting ZFS"
-    mount_root
+
+}
+
+set_zfs() {
+
     echo ">>> setting ZFS cache"
     mkdir -p /mnt/etc/zfs
     touch /mnt/etc/zfs/rpool.cache
