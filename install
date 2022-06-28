@@ -1113,16 +1113,21 @@ install_grub() {
 
 finish() {
 
-    rm -r /root/*
-    exit && exit
+    #rm -r /root/*
+    command+='exit'
+    command+='exit'
     if mountpoint -q /mnt; then
-        umount -R /mnt
+        command+='umount -R /mnt'
     fi
     if [[ $filesystem == "zfs" ]]; then
-        zfs umount -a
-        zpool export rpool
+        command+='zfs umount -a'
+        command+='zpool export rpool'
     fi
-    reboot
+    command+='reboot'
+
+    for i in ${command[@]}; do
+        ${command[i]}
+    done
 
 }
 
