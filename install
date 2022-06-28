@@ -484,11 +484,14 @@ create_zfs() {
     -O devices=off -O xattr=sa -O overlay=on -O logbias=throughput \
     -O primarycache=metadata -O redundant_metadata=most \
     -O relatime=off -O atime=off -O dnodesize=legacy -O normalization=formD \
-    -O canmount=noauto -O mountpoint=/ -R /mnt rpool $root_drive
+    -O canmount=off -O mountpoint=none -R /mnt rpool $root_drive
     echo ">>> checking ZFS pool"
     zpool status
+    echo ">>> creating ZFS dataset"
+    zfs create -o canmount=noauto -o mountpoint=/ rpool/root
     echo ">>> setting ZFS pool as rootfs"
-    zpool set bootfs=rpool rpool
+    zfs inherit dnodesize rpool
+    zpool set bootfs=rpool/root rpool
 
 }
 
