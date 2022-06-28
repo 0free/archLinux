@@ -1104,7 +1104,7 @@ install_bootloader() {
     echo "initrd intel-ucode.img" >> /boot/loader/entries/boot.conf
     echo "initrd /initramfs-linux-lts.img" >> /boot/loader/entries/boot.conf
 
-    if [[ $filesystem == 'zfs']]; then
+    if [[ $filesystem == 'zfs' ]]; then
         echo "options root=zfs=rpool rw" >> /boot/loader/entries/boot.conf
     else
         echo "options root=$root_drive rw" >> /boot/loader/entries/boot.conf
