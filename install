@@ -1197,9 +1197,10 @@ if [[ -f /root/chroot ]]; then
         if [[ -f /root/desktop ]]; then
             setup_desktop
         else
-            if mountpoint -q /boot; then
-                
+            if [[ $bootloader == 'grub' ]]; then
                 install_grub
+            else
+                install_bootloader
             fi
         fi
     else
