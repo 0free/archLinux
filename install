@@ -600,6 +600,7 @@ set_fstab() {
     echo $computer > /mnt/root/chroot
     echo $desktop > /mnt/root/desktop
     echo $aur_installer > /mnt/root/aur
+    echo $bootloader > /mnt/root/bootloader
     change_root
 
 }
@@ -1091,6 +1092,7 @@ set_initcpio() {
 
 install_bootloader() {
 
+    echo ">>> installing systemd-boot"
     bootctl --path=/boot install
     sed -i 's|#timeout 3|timeout 1|' /boot/loader/loader.conf
     sed -i 's|default .*|default boot-*|' /boot/loader/loader.conf
@@ -1144,19 +1146,19 @@ install_grub() {
 finish() {
 
     #rm -r /root/*
-    command+='exit'
-    command+='exit'
+    commands+='exit'
+    commands+='exit'
     if mountpoint -q /mnt; then
-        command+='umount -R /mnt'
+        commands+='umount -R /mnt'
     fi
     if [[ $filesystem == 'zfs' ]]; then
-        command+='zfs umount -a'
-        command+='zpool export rpool'
+        commands+='zfs umount -a'
+        commands+='zpool export rpool'
     fi
-    command+='reboot'
+    commands+='reboot'
 
-    for i in ${command[@]}; do
-        ${command[i]}
+    for command in ${commands[@]}; do
+        $("$command")
     done
 
 }
@@ -1167,6 +1169,7 @@ if [[ -f /root/chroot ]]; then
     computer=$(cat /root/chroot)
     desktop=$(cat /root/desktop)
     aur_installer=$(cat /root/aur)
+    bootloader=$(cat /root/bootloader)
     if [ $(find /home -maxdepth 1 -type d | wc -l) -ne 1 ]; then
         USER=$(ls /home)
         if [[ -f /root/desktop ]]; then
