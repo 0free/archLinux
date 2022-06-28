@@ -597,7 +597,8 @@ set_fstab() {
     fi
     sed -i 's/relatime,space_cache=v2/noatime,compress=zstd:1,ssd,discard=async/g' /mnt/etc/fstab
 
-    echo $computer > /mnt/root/chroot
+    echo $boot_drive > /mnt/root/chroot
+    echo $computer > /mnt/root/computer
     echo $desktop > /mnt/root/desktop
     echo $aur_installer > /mnt/root/aur
     echo $bootloader > /mnt/root/bootloader
@@ -1166,7 +1167,8 @@ finish() {
 clear && set -e
 
 if [[ -f /root/chroot ]]; then
-    computer=$(cat /root/chroot)
+    root_drive=$(cat /root/chroot)
+    computer=$(cat /root/computer)
     desktop=$(cat /root/desktop)
     aur_installer=$(cat /root/aur)
     bootloader=$(cat /root/bootloader)
