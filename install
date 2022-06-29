@@ -1056,9 +1056,6 @@ create_swap_file() {
             -o logbias=throughput -o sync=always -o primarycache=metadata \
             -o secondarycache=none -o com.sun:auto-snapshot=false rpool/swap
             mkswap -f rpool/swap
-            if ! grep -q swap /etc/fstab; then
-                echo 'rpool/swap none swap discard 0 0' >> /etc/fstab
-            fi
             swapon rpool/swap
         fi
     else
@@ -1110,7 +1107,7 @@ EOF
     echo "efi /fwupdx64.efi" >> /boot/loader/entries/fwupd.conf
 
     if [[ $filesystem == 'zfs' ]]; then
-        output="options root=zfs=rpool rw"
+        output="options zfs=rpool rw"
     else
         output="options root=UUID=$uuid quiet architecture x64 rw"
     fi
