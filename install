@@ -1112,7 +1112,7 @@ install_bootloader() {
         echo $(zgenhostid $(hostid)) > /etc/hostid
     fi
 
-    echo > /etc/pacman.d/hooks/99-secureboot.hook
+    cat <<EOF > /etc/pacman.d/hooks/99-secureboot.hook
 [Trigger]
 Operation = Install
 Operation = Upgrade
@@ -1127,7 +1127,7 @@ Exec = /usr/bin/find /boot -type f ( -name vmlinuz-* -o -name systemd* ) -exec /
 Depends = sbsigntools
 Depends = findutils
 Depends = grep
-
+EOF
 
 }
 
