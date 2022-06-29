@@ -962,7 +962,6 @@ enable_services() {
         echo ">>> enabling ZFS services"
         systemctl enable zfs-import-cache
         systemctl enable zfs-import-scan
-        systemctl enable zfs-import
         systemctl enable zfs-mount
         systemctl enable zfs-share
         systemctl enable zfs-zed
