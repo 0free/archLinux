@@ -601,7 +601,7 @@ set_fstab() {
 
     echo "/EFI /boot none defaults,bind 0 0" >> /mnt/etc/fstab
 
-    uuid=$(lsblk -dno UUID $boot_drive)
+    uuid=$(lsblk -dno UUID $root_drive)
     echo $uuid > /mnt/root/chroot
     echo $computer > /mnt/root/computer
     echo $desktop > /mnt/root/desktop
@@ -1087,18 +1087,22 @@ install_bootloader() {
     sed -i 's|default .*|default |' /boot/loader/loader.conf
 
     echo ">>> adding linux to systemd-boot"
-    echo "title Arch Linux" > /boot/loader/entries/linux.conf
-    echo "linux /vmlinuz-linux-lts" >> /boot/loader/entries/linux.conf
-    echo "initrd /amd-ucode.img" >> /boot/loader/entries/linux.conf
-    echo "initrd /intel-ucode.img" >> /boot/loader/entries/linux.conf
-    echo "initrd /initramfs-linux-lts.img" >> /boot/loader/entries/linux.conf
+    cat <<EOF > /boot/loader/entries/linux.conf
+title       Arch Linux
+linux       /vmlinuz-linux-lts
+initrd      /amd-ucode.img
+initrd      /intel-ucode.img
+initrd      /initramfs-linux-lts.img
+EOF
 
     echo ">>> adding linux-fallback to systemd-boot"
-    echo "title Arch Linux fallback" > /boot/loader/entries/linux-fallback.conf
-    echo "linux /vmlinuz-linux-lts-fallback" >> /boot/loader/entries/linux-fallback.conf
-    echo "initrd /amd-ucode.img" >> /boot/loader/entries/linux-fallback.conf
-    echo "initrd /intel-ucode.img" >> /boot/loader/entries/linux-fallback.conf
-    echo "initrd /initramfs-linux-lts-fallback.img" >> /boot/loader/entries/linux-fallback.conf
+    cat <<EOF > /boot/loader/entries/linux-fallback.conf
+title       Arch Linux fallback 
+linux       /vmlinuz-linux-lts-fallback
+initrd      /amd-ucode.img
+initrd      /intel-ucode.img
+initrd      /initramfs-linux-lts-fallback.img
+EOF
 
     echo ">>> adding fwupd to systemd-boot"
     cp /usr/lib/fwupd/efi/fwupdx64.efi /boot/fwupdx64.efi
@@ -1107,13 +1111,12 @@ install_bootloader() {
 
     if [[ $filesystem == 'zfs' ]]; then
         output="options root=zfs=rpool rw"
-        echo $output >> /boot/loader/entries/linux.conf
-        echo $output >> /boot/loader/entries/linux-fallback.conf
     else
         output="options root=UUID=$uuid quiet architecture x64 rw"
-        echo $output >> /boot/loader/entries/linux.conf
-        echo $output >> /boot/loader/entries/linux-fallback.conf
     fi
+
+    echo $output >> /boot/loader/entries/linux.conf
+    echo $output >> /boot/loader/entries/linux-fallback.conf
 
     if [[ ! -f /etc/hostid ]]; then
         echo $(zgenhostid $(hostid)) > /etc/hostid
@@ -1122,6 +1125,12 @@ install_bootloader() {
     if [[ ! -d /etc/pacman.d/hooks ]]; then
         mkdir /etc/pacman.d/hooks
     fi
+
+    cat <<EOF > /etc/modules-load.d/vfat.conf
+vfat
+nls_cp437
+nls_ascii
+EOF
 
     cat <<EOF > /etc/pacman.d/hooks/99-secureboot.hook
 [Trigger]
