@@ -1226,18 +1226,18 @@ set_initcpio() {
 finish() {
 
     echo ">>> un-mount & reboot"
-    exit && sleep 3
+    exit &
+    exit &
     if mountpoint -q /boot; then
-        umount /boot
-    fi
-    if mountpoint -q /mnt; then
-        umount /mnt
+        umount /boot &
     fi
     if grep -q zfs /etc/fstab; then
-        zfs umount -a
-        zpool export rpool
+        zfs umount -a &
+        zpool export rpool &
+    else
+        umount /mnt &
     fi
-    sleep 5 && reboot -f
+    reboot -f
 
 }
 
