@@ -1099,7 +1099,7 @@ install_bootloader() {
     echo "initrd /initramfs-linux-lts-fallback.img" >> /boot/loader/entries/linux-fallback.conf
 
     echo ">>> adding fwupd to systemd-boot"
-    ln -s /usr/lib/fwupd/efi/fwupdx64.efi /boot/fwupdx64.efi
+    cp /usr/lib/fwupd/efi/fwupdx64.efi /boot/fwupdx64.efi
     echo "title firmware update" > /boot/loader/entries/fwupd.conf
     echo "efi /fwupdx64.efi" >> /boot/loader/entries/fwupd.conf
 
