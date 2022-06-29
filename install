@@ -547,13 +547,16 @@ mount_root() {
     if [[ ! -d /mnt/boot ]]; then
         mkdir -p /mnt/boot
     fi
-
+    if [[ ! -d /mnt/EFI ]]; then
+        mkdir -p /mnt/EFI
+    fi
 }
 
 mount_boot() {
 
     echo ">>> mounting boot drive"
     mount $boot_drive /mnt/boot
+    mount --bind /EFI /boot
 
 }
 
@@ -790,8 +793,8 @@ setup_desktop() {
         install_grub
     fi
 
+    firmware_update
     set_initcpio
-
     finish
 
 }
@@ -1107,6 +1110,12 @@ install_bootloader() {
         echo $(zgenhostid $(hostid)) > /etc/hostid
     fi
 
+    cat <<EOF > /etc/modules-load.d/vfat.conf
+vfat
+nls_cp437
+nls_ascii
+EOF
+
     mkdir /etc/pacman.d/hooks
     cat <<EOF > /etc/pacman.d/hooks/99-secureboot.hook
 [Trigger]
@@ -1166,6 +1175,16 @@ install_grub() {
     grub-mkconfig -o /boot/grub/grub.cfg
 
 }
+
+firmware_update() {
+
+    echo ">>> updating firmware"
+    fwupdmgr get-devices
+    fwupdmgr refresh
+    fwupdmgr get-updates
+    fwupdmgr update
+
+)
 
 set_initcpio() {
 
