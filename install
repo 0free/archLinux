@@ -1067,23 +1067,67 @@ create_swap_file() {
 install_bootloader() {
 
     echo ">>> installing systemd-boot"
-    bootctl --path=/boot install
+    bootctl --esp-path=/efi --path=/boot --label="Linux" install
+
+    echo ">>> configuring systemd-boot"
     sed -i 's|#timeout 3|timeout 1|' /boot/loader/loader.conf
-    sed -i 's|default .*|default boot-*|' /boot/loader/loader.conf
-    echo "default boot-*" >> /boot/loader/loader.conf
-    echo "title Arch Linux" >> /boot/loader/entries/boot.conf
-    echo "linux /vmlinuz-linux-lts" >> /boot/loader/entries/boot.conf
-    echo "initrd amd-ucode.img" >> /boot/loader/entries/boot.conf
-    echo "initrd intel-ucode.img" >> /boot/loader/entries/boot.conf
-    echo "initrd /initramfs-linux-lts.img" >> /boot/loader/entries/boot.conf
+    sed -i 's|default .*|default |' /boot/loader/loader.conf
+
+    echo ">>> adding linux to systemd-boot"
+    echo "title Arch Linux" > /boot/loader/entries/linux.conf
+    echo "linux /vmlinuz-linux-lts" >> /boot/loader/entries/linux.conf
+    echo "initrd /amd-ucode.img" >> /boot/loader/entries/linux.conf
+    echo "initrd /intel-ucode.img" >> /boot/loader/entries/linux.conf
+    echo "initrd /initramfs-linux-lts.img" >> /boot/loader/entries/linux.conf
+
+    echo ">>> adding linux-fallback to systemd-boot"
+    echo "title Arch Linux fallback" > /boot/loader/entries/linux-fallback.conf
+    echo "linux /vmlinuz-linux-lts-fallback" >> /boot/loader/entries/linux-fallback.conf
+    echo "initrd /amd-ucode.img" >> /boot/loader/entries/linux-fallback.conf
+    echo "initrd /intel-ucode.img" >> /boot/loader/entries/linux-fallback.conf
+    echo "initrd /initramfs-linux-lts-fallback.img" >> /boot/loader/entries/linux-fallback.conf
+
+    echo ">>> adding fwupd to systemd-boot"
+    echo "title firmware update" > /boot/loader/entries/fwupd.conf
+    echo "efi /fwupdx64.efi" >> /boot/loader/entries/fwupd.conf
+
+    echo ">>> adding gdisk to systemd-boot"
+    echo "title GPT fdisk (gdisk)" > /boot/loader/entries/gdisk.conf
+    echo "efi /gdisk_x64.efi" >> /boot/loader/entries/gdisk.conf
 
     if [[ $filesystem == 'zfs' ]]; then
-        echo "options root=ZFS=rpool rw" >> /boot/loader/entries/boot.conf
+        echo "options root=ZFS=rpool rw" >> /boot/loader/entries/linux.conf
+        echo "options root=ZFS=rpool rw" >> /boot/loader/entries/linux-fallback.conf
     else
-        echo "options root=$uuid rw" >> /boot/loader/entries/boot.conf
+        echo "options root=UUID=$uuid quiet architecture x64 rw" >> /boot/loader/entries/linux.conf
+        echo "options root=UUID=$uuid quiet architecture x64 rw" >> /boot/loader/entries/linux-fallback.conf
     fi
 
-    echo $(zgenhostid $(hostid)) > /etc/hostid
+    cp /boot/loader/entries/linux.conf /efi/loader/entries/linux.conf
+    cp /boot/loader/entries/linux-fallback.conf /efi/loader/entries/linux-fallback.conf
+    cp /boot/loader/entries/fwupd.conf /efi/loader/entries/fwupd.conf
+    cp /boot/loader/entries/gdisk.conf /efi/loader/entries/gdisk.conf
+
+    if [[ ! -f /etc/hostid ]]; then
+        echo $(zgenhostid $(hostid)) > /etc/hostid
+    fi
+
+    echo > /etc/pacman.d/hooks/99-secureboot.hook
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = linux
+Target = systemd
+
+[Action]
+Description = Signing Kernel for SecureBoot
+When = PostTransaction
+Exec = /usr/bin/find /boot -type f ( -name vmlinuz-* -o -name systemd* ) -exec /usr/bin/sh -c 'if ! /usr/bin/sbverify --list {} 2>/dev/null | /usr/bin/grep -q "signature certificates"; then /usr/bin/sbsign --key db.key --cert db.crt --output "$1" "$1"; fi' _ {} ;
+Depends = sbsigntools
+Depends = findutils
+Depends = grep
+
 
 }
 
