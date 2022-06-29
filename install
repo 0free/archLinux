@@ -1186,7 +1186,11 @@ install_grub() {
 
 firmware_update() {
 
-    cat <<EOF >/etc/dbus-1/system-local.conf
+    if [[ /etc/dbus-1/ ]]; then
+        mkdir /etc/dbus-1/
+    fi
+
+    cat <<EOF > /etc/dbus-1/system-local.conf
 <busconfig>
     <includedir>/usr/local/etc/dbus-1/system.d</includedir>
 </busconfig
