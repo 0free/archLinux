@@ -741,6 +741,7 @@ setup_desktop() {
         echo "--latest 5" >> /etc/xdg/reflector/reflector.conf
     fi
 
+    install_mkinitcpio
     install_linux
 
     echo ">>> packages list"
@@ -800,15 +801,21 @@ setup_desktop() {
 
 }
 
+install_mkinitcpio() {
+
+    echo ">>> installing mkinitcpio"
+    pacman -S --needed --noconfirm mkinitcpio
+
+    echo ">>> configuring mkinitcpio"
+    sed -i 's|PRESETS=(.*)|PRESETS=('default')|' /etc/mkinitcpio.d/*.preset
+
+}
+
 install_linux() {
 
     list='linux-lts linux-lts-headers linux-firmware'
     echo ">>> installing linux"
     pacman -S --needed --noconfirm $list
-
-    echo ">>> configuring mkinitcpio"
-
-    sed -i 's|PRESETS=(.*)|PRESETS=('default')|' /etc/mkinitcpio.d/*.preset
 
     if [[ -f /boot/initramfs-lts-fallback.img ]]; then
         rm /boot/initramfs-linux-lts-fallback.img
