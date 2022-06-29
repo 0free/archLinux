@@ -486,13 +486,43 @@ create_zfs() {
     fi
     echo ">>> creating ZFS pool"
     zpool create -f -o ashift=12 -o autotrim=on -O recordsize=8192 \
-    -O compression=lz4 -O acltype=posixacl -O aclinherit=passthrough \
-    -O devices=off -O xattr=sa -O overlay=on -O logbias=throughput \
-    -O primarycache=metadata -O redundant_metadata=most \
-    -O relatime=off -O atime=off -O dnodesize=legacy -O normalization=formD \
+    -O compression=lz4 -O acltype=posixacl \
+    -O devices=off -O xattr=sa -O relatime=off -O atime=off \
+    -O dnodesize=legacy -O normalization=formD \
     -O canmount=noauto -O mountpoint=/ -R /mnt rpool $root_drive
     echo ">>> checking ZFS pool"
     zpool status
+
+}
+
+mount_root() {
+
+    echo ">>> mounting root drive"
+    if [[ $filesystem == 'zfs' ]]; then
+        echo ">>> exporting ZFS"
+        zpool export rpool
+        echo ">>> importing ZFS"
+        zpool import rpool -d $root_drive -R /mnt -N
+        echo ">>> mounting ZFS dataset"
+        zfs mount rpool
+        zfs mount -a
+    else
+        mount $root_drive /mnt
+    fi
+
+    if [[ ! -d /mnt/boot ]]; then
+        mkdir -p /mnt/boot
+    fi
+    if [[ ! -d /mnt/boot/EFI ]]; then
+        mkdir -p /mnt/boot/EFI
+    fi
+
+}
+
+mount_boot() {
+
+    echo ">>> mounting boot drive"
+    mount $boot_drive /mnt/boot
 
 }
 
@@ -525,36 +555,6 @@ set_zfs() {
     echo "options zfs zfs_vdev_sync_write_max_active=32" >> /mnt/etc/modprobe.d/zfs.conf
     echo "options zfs zfs_vdev_sync_read_min_active=8" >> /mnt/etc/modprobe.d/zfs.conf
     echo "options zfs zfs_vdev_sync_read_max_active=32" >> /mnt/etc/modprobe.d/zfs.conf
-
-}
-
-mount_root() {
-
-    echo ">>> mounting root drive"
-    if [[ $filesystem == 'zfs' ]]; then
-        echo ">>> exporting ZFS"
-        zpool export rpool
-        echo ">>> importing ZFS"
-        zpool import rpool -d $root_drive -R /mnt -N
-        echo ">>> mounting ZFS dataset"
-        zfs mount rpool
-        zfs mount -a
-    else
-        mount $root_drive /mnt
-    fi
-
-    if [[ ! -d /mnt/boot ]]; then
-        mkdir -p /mnt/boot
-    fi
-    if [[ ! -d /mnt/boot/EFI ]]; then
-        mkdir -p /mnt/boot/EFI
-    fi
-}
-
-mount_boot() {
-
-    echo ">>> mounting boot drive"
-    mount $boot_drive /mnt/boot
 
 }
 
@@ -1082,7 +1082,7 @@ install_bootloader() {
 
     echo ">>> configuring systemd-boot"
     sed -i 's|#timeout 3|timeout 1|' /boot/loader/loader.conf
-    sed -i 's|default .*|default |' /boot/loader/loader.conf
+    sed -i 's|default .*|default boot-*|' /boot/loader/loader.conf
 
     echo ">>> adding linux to systemd-boot"
     cat <<EOF > /boot/loader/entries/linux.conf
