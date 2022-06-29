@@ -730,7 +730,7 @@ setup_desktop() {
 
     if ! command -v reflector; then
         echo ">>> installing reflector"
-        pacman -S --needed --noconfirm reflector
+        pacman -S --needed --noconfirm rsync reflector
         echo "--save /etc/pacman.d/mirrorlist" >> /etc/xdg/reflector/reflector.conf
         echo "--country Singapore,Germany" >> /etc/xdg/reflector/reflector.conf
         echo "--protocol rsync" >> /etc/xdg/reflector/reflector.conf
