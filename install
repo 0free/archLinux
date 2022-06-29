@@ -944,7 +944,7 @@ enable_services() {
     systemctl enable systemd-resolved
     systemctl enable ufw
     systemctl enable bluetooth
-    systemctl enable reflector
+    systemctl enable reflector.timer
 
     if [[ $desktop == 'gnome' ]]; then
         systemctl enable gdm
@@ -1098,7 +1098,7 @@ EOF
     echo "title firmware update" > /boot/loader/entries/fwupd.conf
     echo "efi /fwupdx64.efi" >> /boot/loader/entries/fwupd.conf
 
-    if [[ $filesystem == 'zfs' ]]; then
+    if grep -q zfs /etc/fstab; then
         output="options zfs=rpool rw"
     else
         output="options root=UUID=$uuid quiet architecture x64 rw"
@@ -1233,7 +1233,7 @@ finish() {
     if mountpoint -q /mnt; then
         umount /mnt
     fi
-    if [[ $filesystem == 'zfs' ]]; then
+    if grep -q zfs /etc/fstab; then
         zfs umount -a
         zpool export rpool
     fi
