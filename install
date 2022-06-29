@@ -807,9 +807,6 @@ install_mkinitcpio() {
     echo ">>> installing mkinitcpio"
     pacman -S --needed --noconfirm mkinitcpio
 
-    echo ">>> configuring mkinitcpio"
-    sed -i 's|PRESETS=(.*)|PRESETS=('default')|' /etc/mkinitcpio.d/*.preset
-
 }
 
 install_linux() {
@@ -821,6 +818,9 @@ install_linux() {
     if [[ -f /boot/initramfs-lts-fallback.img ]]; then
         rm /boot/initramfs-linux-lts-fallback.img
     fi
+
+    echo ">>> configuring mkinitcpio"
+    sed -i 's|PRESETS=(.*)|PRESETS=('default')|' /etc/mkinitcpio.d/*.preset
 
 }
 
