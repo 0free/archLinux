@@ -16,7 +16,7 @@ packages_list() {
         # efi boot
         efibootmgr
         # utilities
-        bash-completion sudo fakeroot syslog-ng dialog unrar unzip wget zip git
+        bash-completion curl syslog-ng dialog unrar unzip wget zip git
         # spell check
         aspell hspell hunspell nuspell libvoikko
         # xorg
