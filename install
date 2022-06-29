@@ -595,10 +595,14 @@ set_fstab() {
 
     echo ">>> setting fstab"
     genfstab -U -p /mnt >> /mnt/etc/fstab
+
     if grep -q zfs /mnt/etc/fstab; then
         sed -i 's/^rpool/#rpool/g' /mnt/etc/fstab
     fi
+
     sed -i 's/relatime,space_cache=v2/noatime,compress=zstd:1,ssd,discard=async/g' /mnt/etc/fstab
+
+    echo "/EFI /boot none defaults,bind 0 0" >> /mnt/etc/fstab
 
     uuid=$(lsblk -dno UUID $boot_drive)
     echo $uuid > /mnt/root/chroot
