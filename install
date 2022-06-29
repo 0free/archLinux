@@ -11,8 +11,6 @@ packages_list() {
     PACKAGES+=(
         # micro-codes
         amd-ucode intel-ucode
-        # dkms
-        dkms
         # efi boot
         efibootmgr
         # utilities
