@@ -1186,7 +1186,7 @@ install_grub() {
 
 firmware_update() {
 
-    if [[ /etc/dbus-1/ ]]; then
+    if [[ ! -d /etc/dbus-1/ ]]; then
         mkdir /etc/dbus-1/
     fi
 
