@@ -16,7 +16,7 @@ packages_list() {
         # efi boot
         efibootmgr
         # utilities
-        bash-completion sudo fakeroot syslog-ng dialog unrar unzip wget zip git reflector
+        bash-completion sudo fakeroot syslog-ng dialog unrar unzip wget zip git
         # spell check
         aspell hspell hunspell nuspell libvoikko
         # xorg
@@ -954,14 +954,15 @@ enable_services() {
         systemctl enable postfix
         systemctl enable dovecot
         systemctl enable opendkim
-        mkdir /var/mysql && chown -R mysql /var/mysql
-        mkdir /var/log/mysql && chown -R mysql /var/log/mysql
+        mkdir /var/mysql && chown -R mysql:mysql /var/mysql
+        mkdir /var/log/mysql && chown -R mysql:mysql /var/log/mysql
     fi
 
     if grep -q zfs /etc/fstab; then
         echo ">>> enabling ZFS services"
         systemctl enable zfs-import-cache
         systemctl enable zfs-import-scan
+        systemctl enable zfs-import
         systemctl enable zfs-mount
         systemctl enable zfs-share
         systemctl enable zfs-zed
