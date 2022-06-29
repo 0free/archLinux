@@ -1095,16 +1095,13 @@ install_bootloader() {
     echo "initrd /initramfs-linux-lts-fallback.img" >> /boot/loader/entries/linux-fallback.conf
 
     echo ">>> adding fwupd to systemd-boot"
+    ln /usr/lib/fwupd/efi/fwupdx64.efi /boot/fwupdx64.efi
     echo "title firmware update" > /boot/loader/entries/fwupd.conf
     echo "efi /fwupdx64.efi" >> /boot/loader/entries/fwupd.conf
 
-    echo ">>> adding gdisk to systemd-boot"
-    echo "title GPT fdisk (gdisk)" > /boot/loader/entries/gdisk.conf
-    echo "efi /gdisk_x64.efi" >> /boot/loader/entries/gdisk.conf
-
     if [[ $filesystem == 'zfs' ]]; then
-        echo "options root=ZFS=rpool rw" >> /boot/loader/entries/linux.conf
-        echo "options root=ZFS=rpool rw" >> /boot/loader/entries/linux-fallback.conf
+        echo "options root=zfs=rpool rw" >> /boot/loader/entries/linux.conf
+        echo "options root=zfs=rpool rw" >> /boot/loader/entries/linux-fallback.conf
     else
         echo "options root=UUID=$uuid quiet architecture x64 rw" >> /boot/loader/entries/linux.conf
         echo "options root=UUID=$uuid quiet architecture x64 rw" >> /boot/loader/entries/linux-fallback.conf
@@ -1222,23 +1219,18 @@ set_initcpio() {
 finish() {
 
     echo ">>> rebooting"
-    commands+='exit'
-    commands+='exit'
-    commands+='umount /mnt/boot'
+    exit
+    exit
+    umount /mnt/boot
 
     if [[ $filesystem == 'zfs' ]]; then
-        commands+='zfs umount -a'
-        commands+='zpool export rpool'
+        zfs umount -a
+        zpool export rpool
     elif mountpoint -q /mnt; then
-        commands+='umount -l /mnt'
+        umount -l /mnt
     fi
 
-    commands+='reboot'
-
-    for command in ${commands[@]}; do
-        output=$(eval $command)
-        echo $output
-    done
+    reboot -f
 
 }
 
