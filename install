@@ -1121,7 +1121,10 @@ nls_cp437
 nls_ascii
 EOF
 
-    mkdir /etc/pacman.d/hooks
+    if [[ ! -d /etc/pacman.d/hooks ]]; then
+        mkdir /etc/pacman.d/hooks
+    fi
+
     cat <<EOF > /etc/pacman.d/hooks/99-secureboot.hook
 [Trigger]
 Operation = Install
