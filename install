@@ -1084,7 +1084,7 @@ install_bootloader() {
         echo "options root=$uuid rw" >> /boot/loader/entries/boot.conf
     fi
 
-    echo hostid > /etc/hostid
+    echo $(zgenhostid $(hostid)) > /etc/hostid
 
 }
 
