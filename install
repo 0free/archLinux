@@ -815,12 +815,12 @@ install_linux() {
     echo ">>> installing linux"
     pacman -S --needed --noconfirm $list
 
-    if [[ -f /boot/initramfs-lts-fallback.img ]]; then
-        rm /boot/initramfs-linux-lts-fallback.img
-    fi
-
     echo ">>> configuring mkinitcpio"
     sed -i 's|PRESETS=(.*)|PRESETS=('default')|' /etc/mkinitcpio.d/*.preset
+
+    if [[ -f /boot/initramfs-linux-lts-fallback.img ]]; then
+        rm /boot/initramfs-linux-lts-fallback.img
+    fi
 
 }
 
@@ -1093,15 +1093,6 @@ initrd      /intel-ucode.img
 initrd      /initramfs-linux-lts.img
 EOF
 
-    echo ">>> adding linux-fallback to systemd-boot"
-    cat <<EOF > /boot/loader/entries/linux-fallback.conf
-title       Arch Linux fallback 
-linux       /vmlinuz-linux-lts-fallback
-initrd      /amd-ucode.img
-initrd      /intel-ucode.img
-initrd      /initramfs-linux-lts-fallback.img
-EOF
-
     echo ">>> adding fwupd to systemd-boot"
     cp /usr/lib/fwupd/efi/fwupdx64.efi /boot/fwupdx64.efi
     echo "title firmware update" > /boot/loader/entries/fwupd.conf
@@ -1114,7 +1105,6 @@ EOF
     fi
 
     echo $output >> /boot/loader/entries/linux.conf
-    echo $output >> /boot/loader/entries/linux-fallback.conf
 
     if [[ ! -f /etc/hostid ]]; then
         echo $(zgenhostid $(hostid)) > /etc/hostid
