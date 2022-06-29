@@ -1186,6 +1186,7 @@ install_grub() {
 
 firmware_update() {
 
+    echo ">>> configuring fwupd"
     if [[ ! -d /etc/dbus-1/ ]]; then
         mkdir /etc/dbus-1/
     fi
@@ -1195,6 +1196,8 @@ firmware_update() {
     <includedir>/usr/local/etc/dbus-1/system.d</includedir>
 </busconfig
 EOF
+
+    systemctl reload dbus.service
 
     echo ">>> updating firmware"
     fwupdmgr get-devices
