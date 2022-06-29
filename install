@@ -490,27 +490,27 @@ create_zfs() {
     -O devices=off -O xattr=sa -O overlay=on -O logbias=throughput \
     -O primarycache=metadata -O redundant_metadata=most \
     -O relatime=off -O atime=off -O dnodesize=legacy -O normalization=formD \
-    -O canmount=on -O mountpoint=/ -R /mnt rpool $root_drive
+    -O canmount=noauto -O mountpoint=/ -R /mnt rpool $root_drive
     echo ">>> checking ZFS pool"
     zpool status
-    echo ">>> setting ZFS pool as rootfs"
-    zpool set bootfs=rpool rpool
 
 }
 
 set_zfs() {
 
+    echo ">>> setting ZFS pool as rootfs"
+    zpool set bootfs=rpool rpool
     echo ">>> setting ZFS cache"
     zpool set cachefile=/etc/zfs/zpool.cache rpool
     mkdir -p /mnt/etc/zfs
     cp /etc/zfs/zpool.cache /mnt/etc/zfs/zpool.cache
     echo ">>> adding ZFS options"
     mkdir -p /mnt/etc/modprobe.d/
+    echo "options scsi_mod scan=sync" >> /mnt/etc/modprobe.d/zfs.conf
     echo "options zfs l2arc_noprefetch=0" >> /mnt/etc/modprobe.d/zfs.conf
     echo "options zfs l2arc_write_max=536870912" >> /mnt/etc/modprobe.d/zfs.conf
     echo "options zfs l2arc_write_boost=1073741824" >> /mnt/etc/modprobe.d/zfs.conf
     echo "options zfs l2arc_headroom=12" >> /mnt/etc/modprobe.d/zfs.conf
-    echo "options scsi_mod scan=sync" >> /mnt/etc/modprobe.d/zfs.conf
     echo "options zfs zfs_arc_max=536870912" >> /mnt/etc/modprobe.d/zfs.conf
     echo "options zfs zfs_arc_min=268435456" >> /mnt/etc/modprobe.d/zfs.conf
     echo "options zfs zfs_prefetch_disable=0" >> /mnt/etc/modprobe.d/zfs.conf
@@ -538,6 +538,7 @@ mount_root() {
         zpool import rpool -d $root_drive -R /mnt -N
         echo ">>> mounting ZFS dataset"
         zfs mount rpool
+        zfs mount -a
     else
         mount $root_drive /mnt
     fi
@@ -594,10 +595,10 @@ set_fstab() {
     genfstab -U -p /mnt >> /mnt/etc/fstab
 
     if grep -q zfs /mnt/etc/fstab; then
-        sed -i 's/^rpool/#rpool/g' /mnt/etc/fstab
+        sed -i 's|^rpool|#rpool|g' /mnt/etc/fstab
     fi
 
-    sed -i 's/relatime,space_cache=v2/noatime,compress=zstd:1,ssd,discard=async/g' /mnt/etc/fstab
+    sed -i 's|relatime,space_cache=v2|noatime,compress=zstd:1,ssd,discard=async|g' /mnt/etc/fstab
 
     echo "/EFI /boot none defaults,bind 0 0" >> /mnt/etc/fstab
 
@@ -1212,7 +1213,6 @@ set_initcpio() {
     if grep -q zfs /etc/fstab; then
         MODULES+=(zfs)
         sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
-        echo "zfs" > /etc/modules-load.d/zfs.conf
     fi
 
     MODULES+=(usbhid xhci_hcd)
