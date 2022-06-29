@@ -1067,7 +1067,7 @@ create_swap_file() {
 install_bootloader() {
 
     echo ">>> installing systemd-boot"
-    bootctl --esp-path=/efi --path=/boot --label="Linux" install
+    bootctl --esp-path=/efi --path=/boot install
 
     echo ">>> configuring systemd-boot"
     sed -i 's|#timeout 3|timeout 1|' /boot/loader/loader.conf
