@@ -782,8 +782,6 @@ setup_desktop() {
         create_swap_file
     fi
 
-    set_initcpio
-
     if [[ $bootloader == 'systemd-boot' ]]; then
         install_bootloader
     fi
@@ -791,6 +789,8 @@ setup_desktop() {
     if [[ $bootloader == 'grub' ]]; then
         install_grub
     fi
+
+    set_initcpio
 
     finish
 
@@ -1065,35 +1065,6 @@ create_swap_file() {
 
 }
 
-set_initcpio() {
-
-    if grep -q btrfs /etc/fstab; then
-        MODULES+=(btrfs)
-    fi
-
-    if grep -q zfs /etc/fstab; then
-        MODULES+=(zfs)
-        sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
-    fi
-
-    MODULES+=(usbhid xhci_hcd)
-    MODULES+=(i915 intel_agp)
-    MODULES+=(amdgpu)
-    MODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
-
-    list=''
-    for i in ${!MODULES[@]}; do
-        list+=${MODULES[$i]}
-        list+=' '
-    done
-
-    sed -i "s|^MODULES=(.*)|MODULES=($list)|" /etc/mkinitcpio.conf
-
-    echo ">>> building initial ramdisk"
-    mkinitcpio --allpresets
-
-}
-
 install_bootloader() {
 
     echo ">>> installing systemd-boot"
@@ -1112,6 +1083,8 @@ install_bootloader() {
     else
         echo "options root=$uuid rw" >> /boot/loader/entries/boot.conf
     fi
+
+    echo hostid > /etc/hostid
 
 }
 
@@ -1152,6 +1125,35 @@ install_grub() {
 
     echo ">>> making grub config"
     grub-mkconfig -o /boot/grub/grub.cfg
+
+}
+
+set_initcpio() {
+
+    if grep -q btrfs /etc/fstab; then
+        MODULES+=(btrfs)
+    fi
+
+    if grep -q zfs /etc/fstab; then
+        MODULES+=(zfs)
+        sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
+    fi
+
+    MODULES+=(usbhid xhci_hcd)
+    MODULES+=(i915 intel_agp)
+    MODULES+=(amdgpu)
+    MODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
+
+    list=''
+    for i in ${!MODULES[@]}; do
+        list+=${MODULES[$i]}
+        list+=' '
+    done
+
+    sed -i "s|^MODULES=(.*)|MODULES=($list)|" /etc/mkinitcpio.conf
+
+    echo ">>> building initial ramdisk"
+    mkinitcpio --allpresets
 
 }
 
