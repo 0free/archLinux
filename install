@@ -1107,6 +1107,7 @@ install_bootloader() {
         echo $(zgenhostid $(hostid)) > /etc/hostid
     fi
 
+    touch /etc/pacman.d/hooks/99-secureboot.hook
     cat <<EOF > /etc/pacman.d/hooks/99-secureboot.hook
 [Trigger]
 Operation = Install
