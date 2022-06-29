@@ -1106,22 +1106,18 @@ install_bootloader() {
     echo "efi /fwupdx64.efi" >> /boot/loader/entries/fwupd.conf
 
     if [[ $filesystem == 'zfs' ]]; then
-        echo "options root=zfs=rpool rw" >> /boot/loader/entries/linux.conf
-        echo "options root=zfs=rpool rw" >> /boot/loader/entries/linux-fallback.conf
+        output="options root=zfs=rpool rw"
+        echo $output >> /boot/loader/entries/linux.conf
+        echo $output >> /boot/loader/entries/linux-fallback.conf
     else
-        echo "options root=UUID=$uuid quiet architecture x64 rw" >> /boot/loader/entries/linux.conf
-        echo "options root=UUID=$uuid quiet architecture x64 rw" >> /boot/loader/entries/linux-fallback.conf
+        output="options root=UUID=$uuid quiet architecture x64 rw"
+        echo $output >> /boot/loader/entries/linux.conf
+        echo $output >> /boot/loader/entries/linux-fallback.conf
     fi
 
     if [[ ! -f /etc/hostid ]]; then
         echo $(zgenhostid $(hostid)) > /etc/hostid
     fi
-
-    cat <<EOF > /etc/modules-load.d/vfat.conf
-vfat
-nls_cp437
-nls_ascii
-EOF
 
     if [[ ! -d /etc/pacman.d/hooks ]]; then
         mkdir /etc/pacman.d/hooks
@@ -1234,17 +1230,18 @@ set_initcpio() {
 finish() {
 
     echo ">>> un-mount & reboot"
+    exit && sleep 3
     if mountpoint -q /boot; then
-        umount -l /boot
+        umount /boot
     fi
     if mountpoint -q /mnt; then
-        umount -l /mnt
+        umount /mnt
     fi
     if [[ $filesystem == 'zfs' ]]; then
         zfs umount -a
         zpool export rpool
     fi
-    reboot -f
+    sleep 5 && reboot -f
 
 }
 
