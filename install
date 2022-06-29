@@ -1195,6 +1195,7 @@ set_initcpio() {
     if grep -q zfs /etc/fstab; then
         MODULES+=(zfs)
         sed -i 's/filesystems keyboard fsck/keyboard zfs filesystems/' /etc/mkinitcpio.conf
+        echo "zfs" > /etc/modules-load.d/zfs.conf
     fi
 
     MODULES+=(usbhid xhci_hcd)
