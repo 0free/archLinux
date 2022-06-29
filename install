@@ -1234,19 +1234,14 @@ set_initcpio() {
 finish() {
 
     echo ">>> un-mount & reboot"
-    exit
-    exit
     umount /mnt/boot
-
     if mountpoint -q /mnt; then
         umount -l /mnt
     fi
-
     if [[ $filesystem == 'zfs' ]]; then
         zfs umount -a
         zpool export rpool
     fi
-
     reboot -f
 
 }
