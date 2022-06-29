@@ -1103,11 +1103,6 @@ install_bootloader() {
         echo "options root=UUID=$uuid quiet architecture x64 rw" >> /boot/loader/entries/linux-fallback.conf
     fi
 
-    cp /boot/loader/entries/linux.conf /efi/loader/entries/linux.conf
-    cp /boot/loader/entries/linux-fallback.conf /efi/loader/entries/linux-fallback.conf
-    cp /boot/loader/entries/fwupd.conf /efi/loader/entries/fwupd.conf
-    cp /boot/loader/entries/gdisk.conf /efi/loader/entries/gdisk.conf
-
     if [[ ! -f /etc/hostid ]]; then
         echo $(zgenhostid $(hostid)) > /etc/hostid
     fi
