@@ -1185,7 +1185,7 @@ firmware_update() {
     fwupdmgr get-updates
     fwupdmgr update
 
-)
+}
 
 set_initcpio() {
 
