@@ -547,8 +547,8 @@ mount_root() {
     if [[ ! -d /mnt/boot ]]; then
         mkdir -p /mnt/boot
     fi
-    if [[ ! -d /mnt/EFI ]]; then
-        mkdir -p /mnt/EFI
+    if [[ ! -d /mnt/boot/EFI ]]; then
+        mkdir -p /mnt/boot/EFI
     fi
 }
 
@@ -556,7 +556,6 @@ mount_boot() {
 
     echo ">>> mounting boot drive"
     mount $boot_drive /mnt/boot
-    mount --bind /EFI /boot
 
 }
 
