@@ -597,7 +597,8 @@ set_fstab() {
     fi
     sed -i 's/relatime,space_cache=v2/noatime,compress=zstd:1,ssd,discard=async/g' /mnt/etc/fstab
 
-    echo $boot_drive > /mnt/root/chroot
+    uuid=$(lsblk -dno UUID $boot_drive)
+    echo $uuid > /mnt/root/chroot
     echo $computer > /mnt/root/computer
     echo $desktop > /mnt/root/desktop
     echo $aur_installer > /mnt/root/aur
@@ -1108,7 +1109,7 @@ install_bootloader() {
     if [[ $filesystem == 'zfs' ]]; then
         echo "options root=ZFS=rpool rw" >> /boot/loader/entries/boot.conf
     else
-        echo "options root=$root_drive rw" >> /boot/loader/entries/boot.conf
+        echo "options root=$uuid rw" >> /boot/loader/entries/boot.conf
     fi
 
 }
@@ -1179,7 +1180,7 @@ finish() {
 clear && set -e
 
 if [[ -f /root/chroot ]]; then
-    root_drive=$(cat /root/chroot)
+    uuid=$(cat /root/chroot)
     computer=$(cat /root/computer)
     desktop=$(cat /root/desktop)
     aur_installer=$(cat /root/aur)
